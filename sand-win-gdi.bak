@@ -8,9 +8,6 @@
 anew -FigGraph.f
 
 needs gdi/gdi.f
-create polytest
-  160 , 90 , 200 , 120 ,
-2 value polysize
 
 \ Define an Object that is a child of the Class Window
 :OBJECT Grafdemo <SUPER WINDOW
@@ -140,9 +137,6 @@ Create POLYDATA
                 \ Change the pen colour and draw a polyline
                 Pen: MAGENTA SelectObject: tDC drop
                 5 POLYDATA DrawPolyLine: self
-                Pen: MAGENTA SelectObject: tDC drop
-                polysize polytest DrawPolyLine: self
-
 
                 \ cleanup
                 SelectObject: tDC drop \ bursh
