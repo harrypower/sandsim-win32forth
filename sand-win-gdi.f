@@ -10,6 +10,7 @@ anew -FigGraph.f
 needs gdi/gdi.f
 create polytest
   160 , 90 , 200 , 120 ,
+polytest value polydataddr@
 2 value polysize
 
 \ Define an Object that is a child of the Class Window
@@ -141,7 +142,7 @@ Create POLYDATA
                 Pen: MAGENTA SelectObject: tDC drop
                 5 POLYDATA DrawPolyLine: self
                 Pen: MAGENTA SelectObject: tDC drop
-                polysize polytest DrawPolyLine: self
+                polysize polydataddr@ DrawPolyLine: self
 
 
                 \ cleanup
