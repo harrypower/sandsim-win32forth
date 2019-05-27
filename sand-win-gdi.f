@@ -14,9 +14,7 @@ polytest value polydataddr@
 2 value polysize
 
 \ Define an Object that is a child of the Class Window
-:OBJECT Grafdemo <SUPER WINDOW
-
-ButtonControl Button_1   \ a button
+:OBJECT Sandtable-demo <SUPER WINDOW
 
 gdiWindowDC tDC
 
@@ -38,16 +36,14 @@ Create POLYDATA
         ;M
 
 :M WindowTitle: ( -- title )
-        z" Drawing Figures with Win32Forth " ;M
+        z" Simulated sandtable with Win32Forth " ;M
 
 :M StartSize:   ( -- width height )
-        550 230 ;M
+        600 600 ;M
 
 :M StartPos:    ( -- x y )
         100 100 ;M
 
-\ Create five drawing methods.
-\ Follow these patterns for other Windows figures such as Arc.
 :M DrawRect:    ( bottom right top left -- )
         4reverse Rectangle: tDC ;M
 
@@ -67,20 +63,12 @@ Create POLYDATA
 
 :M On_Init:     ( -- )
 
-        \ Set up a Button
-        IDOK               SetID: Button_1
-        self               Start: Button_1
-        160 180 70 25       Move: Button_1
-        s" CLOSE"        SetText: Button_1
-                        GetStyle: Button_1 BS_DEFPUSHBUTTON OR
-                        SetStyle: Button_1
-
         \ Create all non Stock Object Pens and Brushes required.
         \ ONLY PenWidth 1 allowed with PenStyles other than PS_SOLID
         128 128 128 SetRGB: hPen1 12 SetWidth: hPen1 PS_SOLID SetStyle: hPen1 Create: hPen1
-          0   0 255 SetRGB: hPen2  1 SetWidth: hPen1 PS_DOT   SetStyle: hPen2 Create: hPen2
-        255   0   0 SetRGB: hPen3  4 SetWidth: hPen1 PS_SOLID SetStyle: hPen3 Create: hPen3
-          0  255  0 SetRGB: hPen4  1 SetWidth: hPen1 PS_NULL  SetStyle: hPen4 Create: hPen4
+          0   0 255 SetRGB: hPen2  1 SetWidth: hPen2 PS_DOT   SetStyle: hPen2 Create: hPen2
+        255   0   0 SetRGB: hPen3  4 SetWidth: hPen3 PS_SOLID SetStyle: hPen3 Create: hPen3
+          0  255  0 SetRGB: hPen4  1 SetWidth: hPen4 PS_NULL  SetStyle: hPen4 Create: hPen4
 
           0 128 128 SetRGB: hBrush1 HS_DIAGCROSS SetStyle: hBrush1 Create: hBrush1
 
@@ -96,13 +84,13 @@ Create POLYDATA
                 Brush: LTGREEN SelectObject: tDC
 
                 \ draw a rectangle with solid fill
-                hPen1 SelectObject: tDC
-                100 80 20 20 DrawRect: self
+                hPen1 SelectObject: tDC drop
+                0 0  StartSize: self DrawRect: self
 
                 \ Change the pen colour and draw a polyline
                 Pen: MAGENTA SelectObject: tDC drop
                 5 POLYDATA DrawPolyLine: self
-                Pen: MAGENTA SelectObject: tDC drop
+                hPen3 SelectObject: tDC drop
                 polysize polydataddr@ DrawPolyLine: self
 
                 \ cleanup
@@ -119,7 +107,7 @@ Create POLYDATA
  ;OBJECT
 
 : DEMO  ( -- )
-        Start: Grafdemo ;
+        Start: Sandtable-demo ;
 DEMO
 
 \ END OF LISTING
