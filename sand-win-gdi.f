@@ -51,16 +51,6 @@ Create POLYDATA
 :M DrawRect:    ( bottom right top left -- )
         4reverse Rectangle: tDC ;M
 
-:M DrawEllipse: ( bottom right top left -- )
-        4reverse Ellipse: tDC ;M
-
-:M DrawPie: ( Drawn counter clockwise from xstart, ystart )
-        ( yfinish xfinish ystart xstart bottom right top left  -- )
-        8reverse Pie: tDC ;M
-
-:M DrawRoundRect: ( ycnr xcnr bottom right top left -- )
-        6reverse RoundRect: tDC ;M
-
 :M DrawPolyLine:  ( n addr -- )
         swap Polyline: tDC ;M
 
@@ -109,41 +99,11 @@ Create POLYDATA
                 hPen1 SelectObject: tDC
                 100 80 20 20 DrawRect: self
 
-                \ change pen to hPen2 and
-                \ draw a dotted line
-                hPen2 SelectObject: tDC drop
-                100 20 MoveTo: tDC
-                230 20 LineTo: tDC
-
-                \ Select pen hPen3 and draw an ellipse
-                Brush: LTYELLOW SelectObject: tDC drop
-                hPen3 SelectObject: tDC drop
-                100 485 40 340 DrawEllipse: self
-
-                \ Select pen hPen3 and draw a pie
-                Brush: LTCYAN SelectObject: tDC drop
-                hPen4 SelectObject: tDC drop
-                190 60 120 140 200 240 120 70 DrawPie: self
-
-                \ Select pen hPen2, change background color,
-                \ brush and draw a rounded rectangle
-                Color: LTRED SetBackgroundColor: tDC
-                hBrush1 SelectObject: tDC drop
-                hPen2 SelectObject: tDC drop
-                20 80 200 515 120 290 DrawRoundRect: self
-
-                \ Change the pen colour and brush, draw an ellipse
-                Color: WHITE SetBackgroundColor: tDC
-                Pen: LTGREEN SelectObject: tDC drop
-                NULL_BRUSH SelectStockObject: tDC drop \ this doesn't work... why?
-                150 520 20 280 DrawEllipse: self
-
                 \ Change the pen colour and draw a polyline
                 Pen: MAGENTA SelectObject: tDC drop
                 5 POLYDATA DrawPolyLine: self
                 Pen: MAGENTA SelectObject: tDC drop
                 polysize polydataddr@ DrawPolyLine: self
-
 
                 \ cleanup
                 SelectObject: tDC drop \ bursh
