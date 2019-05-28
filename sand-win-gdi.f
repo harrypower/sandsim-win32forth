@@ -9,9 +9,9 @@ anew -FigGraph.f
 
 needs gdi/gdi.f
 create polytest
-  160 , 90 , 200 , 120 ,
+  160 , 90 , 200 , 120 , 350 , 350 ,
 polytest value polydataddr@
-2 value polysize
+3 value polysize
 
 \ Define an Object that is a child of the Class Window
 :OBJECT Sandtable-demo <SUPER WINDOW
