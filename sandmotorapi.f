@@ -19,10 +19,20 @@
 \ I have removed all motor controler stuff and removed or changed words not in win32forth
 
 \ Requires:
-
+\ needs sand-win-gdi.f
 \ Revisions:
 \ 5/28/2019 started coding
 
+needs sand-win-gdi.f
+
+\ this -do and -loop are needed only once in following code and here because win32forth does not have them
+\ : -LOOP ( compilation -do-sys -- ; run-time loop-sys1 +n -- | loop-sys2 )
+\     POSTPONE negate POSTPONE +loop
+\     POSTPONE else POSTPONE 2drop POSTPONE then ; immediate
+
+\ : -DO ( compilation -- -do-sys ; run-time n1 n2 -- | loop-sys )
+\     POSTPONE 2dup POSTPONE < POSTPONE if
+\     POSTPONE swap POSTPONE 1+ POSTPONE swap POSTPONE do ; immediate
 
 0 value xmotor
 0 value ymotor
@@ -34,7 +44,7 @@ false value homedone?   \ false means table has not been homed true means table 
 0 constant xm-min
 0 constant ym-min
 600 constant xm-max \ note this is windows drawing size x
-600 constant ym-max \ note this is windows drawing size y 
+600 constant ym-max \ note this is windows drawing size y
 1 constant forward
 0 constant backward
 true value xposition  \ is the real location of x motor .. note if value is true then home position not know so x is not know yet
@@ -69,8 +79,8 @@ true value yposition  \ is the real location of y motor .. note if value is true
   if \ only do steps if all configured and home is know
     xm-max ux >= xm-min ux <= and
     if
-      \ **** need to put code here to add the data to move list for window to display it *****
       ux to xposition
+      xposition yposition nxy!: line-list
       200
     else
       201
@@ -87,8 +97,8 @@ true value yposition  \ is the real location of y motor .. note if value is true
   if \ only do steps if all configured and home is know
     ym-max uy >= ym-min uy <= and
     if
-    \ **** need to put code here to add the data to move list for window to display it *****
       uy to yposition
+      xposition yposition nxy!: line-list
       200
     else
       201
@@ -120,30 +130,37 @@ true value yposition  \ is the real location of y motor .. note if value is true
       ux xposition >
       if
         ux 1 + xposition do
-          silentspeed
-          steps xmotor timedsteps i to xposition
+          \ silentspeed
+          ( steps xmotor timedsteps ) i to xposition
+          xposition yposition nxy!: line-list
           mslope i s>f f* bintercept f+ f>s dup dup yposition <>
           if
-            yposition - abs silentspeed
-            swap ymotor timedsteps to yposition
+            yposition - abs \ silentspeed
+            swap drop ( ymotor timedsteps ) to yposition
+            xposition yposition nxy!: line-list
           else
             drop drop
           then
         steps +loop
       else
-        ux 1 - xposition -do
-          silentspeed
-          steps xmotor timedsteps i to xposition
-          mslope i s>f f* bintercept f+ f>s dup dup yposition <>
-          if
-            yposition - abs silentspeed
-            swap ymotor timedsteps to yposition
-          else
-            drop drop
-          then
-        steps -loop
+        ux to xposition
+        uy to yposition
+        xposition yposition nxy!: line-list
+      \  ux 1 - xposition -do
+          \ silentspeed
+      \    ( steps xmotor timedsteps ) i to xposition
+      \    xposition yposition nxy!: line-list
+      \    mslope i s>f f* bintercept f+ f>s dup dup yposition <>
+      \    if
+      \      yposition - abs silentspeed
+      \      swap drop ( ymotor timedsteps ) to yposition
+      \      xposition yposition nxy!: line-list
+      \    else
+      \      drop drop
+      \    then
+      \  steps -loop
       then
-      ymotor disable-motor xmotor disable-motor
+      \ ymotor disable-motor xmotor disable-motor
       \ rounding error cleanup final draw
       xposition ux <> if ux movetox dup 200 <> if exit else drop then then
       yposition uy <> if uy movetoy dup 200 <> if exit else drop then then
@@ -176,8 +193,10 @@ true value yposition  \ is the real location of y motor .. note if value is true
 0 value nby2
 0 value pointtest
 0 value boardertest
-\ 0e fvariable mslope mslope f!
-\ 0e fvariable bintersect bintersect f!
+\ 0e fvariable mslope1 mslope1 f!
+\ 0e fvariable bintercept1 bintercept1 f!
+0e fvalue mslope1
+0e fvalue bintercept1
 : drawline ( nx1 ny1 nx2 ny2 -- nflag ) \ draw the line on the sandtable and move drawing stylus around the boarder if needed because line is behond table
 \ nx1 ny1 is start of line ... nx2 ny2 is end of line drawn
 \ nflag returns information about what happened in drawing the requested line
@@ -186,6 +205,8 @@ true value yposition  \ is the real location of y motor .. note if value is true
   { nx1 ny1 nx2 ny2 }
   0 to pointtest
   0 to boardertest
+  0e to mslope1
+  0e to bintercept1
   nx1 nx2 = ny1 ny2 = and nx1 xm-min >= nx1 xm-max <= and and ny1 ym-min >= ny1 ym-max <= and and if nx1 ny1 movetoxy exit then
   nx1 nx2 = ny1 ny2 = and nx1 xm-min < nx1 xm-max > or and if nx1 ny1 boardermove exit then
   nx1 nx2 = ny1 ny2 = and ny1 ym-min < ny1 ym-max > or and if nx1 ny1 boardermove exit then
@@ -201,7 +222,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
       ny1 to nsy1 ny2 to nsy2
     else
       \ y is not on sandtable
-      ny1 ym-min >= ny1 ym-max <= and ifs
+      ny1 ym-min >= ny1 ym-max <= and if
         ny1 to nsy1
       else
         ny1 ym-min < if ym-min to nsy1 else ym-max to nsy1 then
@@ -238,8 +259,8 @@ true value yposition  \ is the real location of y motor .. note if value is true
     2 to pointtest
   then
 
-  ny2 ny1 - s>f nx2 nx1 - s>f f/ to mslope
-  ny1 s>f nx1 s>f mslope f* f- to bintersect
+  ny2 ny1 - s>f nx2 nx1 - s>f f/ to mslope1
+  ny1 s>f nx1 s>f mslope1 f* f- to bintercept1
 
   nx1 nx2 = ny1 ny2 = or invert \ test horizontal or vertical
   nx1 xm-min >= nx1 xm-max <= and \ test if in bounds or out of bounds
@@ -259,15 +280,15 @@ true value yposition  \ is the real location of y motor .. note if value is true
   then
 
   pointtest 2 <> if
-    \ x=0 then bintersect is y
-    bintersect f@ ym-min s>f f>= bintersect f@ ym-max s>f f<= and if 0 to nbx1 bintersect f@ f>s to nby1 1 to boardertest else 0 to boardertest then
+    \ x=0 then bintercept1 is y
+    bintercept1 f@ ym-min s>f f>= bintercept1 f@ ym-max s>f f<= and if 0 to nbx1 bintercept1 f@ f>s to nby1 1 to boardertest else 0 to boardertest then
     \ y=mx+b
-    mslope xm-max s>f f* bintersect f+ fdup fdup
+    mslope1 xm-max s>f f* bintercept1 f+ fdup fdup
     ym-min s>f f>= ym-max s>f f<= and if boardertest 0 = if xm-max to nbx1 f>s to nby1 else xm-max to nbx2 f>s to nby2 then boardertest 1 + to boardertest else fdrop then
     \ y-b=mx ... x = (y/m)-(b/m)
-    ym-min s>f mslope f/ bintersect mslope f/ f- fdup fdup
+    ym-min s>f mslope1 f/ bintercept1 mslope1 f/ f- fdup fdup
     xm-min s>f f>= xm-max s>f f<= and boardertest 2 < and if boardertest 0 = if f>s to nbx1 ym-min to nby1 else f>s to nbx2 ym-min to nby2 then boardertest 1 + to boardertest else fdrop then
-    ym-max s>f mslope f/ bintersect mslope f/ f- fdup fdup
+    ym-max s>f mslope1 f/ bintercept1 mslope1 f/ f- fdup fdup
     xm-min s>f f>= xm-max s>f f<= and boardertest 2 < and if boardertest 0 = if f>s to nbx1 ym-max to nby1 else f>s to nbx2 ym-max to nby2 then boardertest 1 + to boardertest else fdrop then
 
     boardertest 0 = pointtest 0 = and if nx2 ny2 boardermove exit then \ line is not on sandtable
@@ -310,6 +331,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
 : dohome ( -- nflag ) \ find x and y home position ... nflag is true if calibration is done.   nflag is false for or other value for a calibration failure
   xm-min to xposition
   ym-min to yposition
+  0 0 nxy!: line-list
   true to homedone?
   homedone? ;
 
@@ -444,6 +466,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
 : quickstart ( ux uy -- nflag ) \ start up sandtable assuming the physical table is at ux and uy location
   to yposition
   to xposition
+  xposition yposition nxy!: line-list
   true to homedone?
   configure-stuff ;
 

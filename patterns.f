@@ -24,7 +24,7 @@
 \ Revisions:
 \ 04/06/2019 started coding
 
-require random.fs
+\ require random.fs
 require sandmotorapi.fs
 
 : rndstar ( uamount -- ) \ will start at a random board location and draw random length lines from that start point radiating out

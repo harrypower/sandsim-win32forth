@@ -107,10 +107,12 @@ gdiHatchBrush hBrush1
                   >firstlink: line-list nxy@: line-list MoveTo: tDC drop drop
                   \ Change the pen colour and draw a line
                   hPen2 SelectObject: tDC drop
-                  qnt: line-list 1 do
-                    nxy@: line-list Drawlineto: self
-                  loop
-                then 
+                  qnt: line-list 1 > if
+                    qnt: line-list 1 do
+                      nxy@: line-list Drawlineto: self
+                    loop
+                  then
+                then
 
                 \ cleanup
                 SelectObject: tDC drop \ bursh
