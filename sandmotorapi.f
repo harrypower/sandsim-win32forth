@@ -25,6 +25,7 @@
 
 needs sand-win-gdi.f
 
+in-system
 \ this -do and -loop are needed only once in following code and here because win32forth does not have them
 : -LOOP ( compilation -do-sys -- ; run-time loop-sys1 +n -- | loop-sys2 )
      POSTPONE negate POSTPONE +loop
@@ -33,6 +34,7 @@ needs sand-win-gdi.f
 : -DO ( compilation -- -do-sys ; run-time n1 n2 -- | loop-sys )
      POSTPONE 2dup POSTPONE < POSTPONE if
      POSTPONE swap POSTPONE 1+ POSTPONE swap POSTPONE do ; immediate
+in-application
 
 0 value xmotor
 0 value ymotor
