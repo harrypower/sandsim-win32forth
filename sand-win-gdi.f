@@ -38,6 +38,7 @@ needs gdi/gdi.f
 100 200 nxy!: line-list
 200 300 nxy!: line-list
 300 300 nxy!: line-list
+30 50 nxy!: line-list
 
 \ Define an Object that is a child of the Class Window
 :OBJECT Sandtable-demo <SUPER WINDOW
@@ -102,12 +103,14 @@ gdiHatchBrush hBrush1
                 hPen1 SelectObject: tDC drop
                 0 0  StartSize: self DrawRect: self
 
-                >firstlink: line-list nxy@: line-list MoveTo: tDC drop drop
-                \ Change the pen colour and draw a line
-                hPen2 SelectObject: tDC drop
-                nxy@: line-list Drawlineto: self
-                nxy@: line-list Drawlineto: self
-                nxy@: line-list Drawlineto: self
+                qnt: line-list 0 <> if
+                  >firstlink: line-list nxy@: line-list MoveTo: tDC drop drop
+                  \ Change the pen colour and draw a line
+                  hPen2 SelectObject: tDC drop
+                  qnt: line-list 1 do
+                    nxy@: line-list Drawlineto: self
+                  loop
+                then 
 
                 \ cleanup
                 SelectObject: tDC drop \ bursh

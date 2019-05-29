@@ -3,9 +3,9 @@ BuildFile=
 SearchPath= C:\Users\Philip\Documents\github\sandsim-win32forth\
 sandtable simulator,0
 Modules,3
+C:\Users\Philip\Documents\github\sandsim-win32forth\patterns.F
+C:\Users\Philip\Documents\github\sandsim-win32forth\sandmotorapi.F
 C:\Users\Philip\Documents\github\sandsim-win32forth\sand-win-gdi.f
-C:\Users\Philip\Documents\github\sandsim-win32forth\sandmotorapi.f
-C:\Users\Philip\Documents\github\sandsim-win32forth\patterns.f
 DLLs,0
 Forms,0
 Auxiliary Files,0
