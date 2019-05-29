@@ -33,8 +33,8 @@ false value homedone?   \ false means table has not been homed true means table 
 3000 value stopbuffer
 0 constant xm-min
 0 constant ym-min
-274000 constant xm-max
-274000 constant ym-max
+600 constant xm-max \ note this is windows drawing size x
+600 constant ym-max \ note this is windows drawing size y 
 1 constant forward
 0 constant backward
 true value xposition  \ is the real location of x motor .. note if value is true then home position not know so x is not know yet
