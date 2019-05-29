@@ -26,13 +26,13 @@
 needs sand-win-gdi.f
 
 \ this -do and -loop are needed only once in following code and here because win32forth does not have them
-\ : -LOOP ( compilation -do-sys -- ; run-time loop-sys1 +n -- | loop-sys2 )
-\     POSTPONE negate POSTPONE +loop
-\     POSTPONE else POSTPONE 2drop POSTPONE then ; immediate
+: -LOOP ( compilation -do-sys -- ; run-time loop-sys1 +n -- | loop-sys2 )
+     POSTPONE negate POSTPONE +loop
+     POSTPONE else POSTPONE 2drop POSTPONE then ; immediate
 
-\ : -DO ( compilation -- -do-sys ; run-time n1 n2 -- | loop-sys )
-\     POSTPONE 2dup POSTPONE < POSTPONE if
-\     POSTPONE swap POSTPONE 1+ POSTPONE swap POSTPONE do ; immediate
+: -DO ( compilation -- -do-sys ; run-time n1 n2 -- | loop-sys )
+     POSTPONE 2dup POSTPONE < POSTPONE if
+     POSTPONE swap POSTPONE 1+ POSTPONE swap POSTPONE do ; immediate
 
 0 value xmotor
 0 value ymotor
@@ -143,22 +143,19 @@ true value yposition  \ is the real location of y motor .. note if value is true
           then
         steps +loop
       else
-        ux to xposition
-        uy to yposition
-        xposition yposition nxy!: line-list
-      \  ux 1 - xposition -do
+        ux 1 - xposition -do
           \ silentspeed
-      \    ( steps xmotor timedsteps ) i to xposition
-      \    xposition yposition nxy!: line-list
-      \    mslope i s>f f* bintercept f+ f>s dup dup yposition <>
-      \    if
-      \      yposition - abs silentspeed
-      \      swap drop ( ymotor timedsteps ) to yposition
-      \      xposition yposition nxy!: line-list
-      \    else
-      \      drop drop
-      \    then
-      \  steps -loop
+          ( steps xmotor timedsteps ) i to xposition
+          xposition yposition nxy!: line-list
+          mslope i s>f f* bintercept f+ f>s dup dup yposition <>
+          if
+            yposition - abs \ silentspeed
+            swap drop ( ymotor timedsteps ) to yposition
+            xposition yposition nxy!: line-list
+          else
+            drop drop
+          then
+        steps -loop
       then
       \ ymotor disable-motor xmotor disable-motor
       \ rounding error cleanup final draw
