@@ -9,6 +9,36 @@ anew -sand-win-gdi.f
 needs linklist.f
 needs gdi/gdi.f
 
+\ Define Object containing the line data list
+:OBJECT line-list <SUPER Linked-List
+
+:M ClassInit:  ( -- ) \ constructor
+  ClassInit: super
+  ;M
+
+:M ~: ( -- ) \ destructor
+  ~: super
+  ;M
+
+:M nxy!: ( nx ny -- ) \ store nx and ny in list
+  swap Data!: self AddLink: self
+  Data!: self AddLink: self
+  ;M
+
+:M nxy@: ( -- nx ny ) \ retrieve next nx ny from list
+  Data@: self >NextLink: self
+  Data@: self >NextLink: self
+  ;M
+
+:M qnt: ( -- nline-qnt ) \ return how many lines
+  #Links: self 1 - 2 / ;M
+
+;OBJECT
+0 0     nxy!: line-list
+100 200 nxy!: line-list
+200 300 nxy!: line-list
+300 300 nxy!: line-list
+
 \ Define an Object that is a child of the Class Window
 :OBJECT Sandtable-demo <SUPER WINDOW
 
@@ -72,12 +102,12 @@ gdiHatchBrush hBrush1
                 hPen1 SelectObject: tDC drop
                 0 0  StartSize: self DrawRect: self
 
-                0 0 MoveTo: tDC drop drop
+                >firstlink: line-list nxy@: line-list MoveTo: tDC drop drop
                 \ Change the pen colour and draw a line
                 hPen2 SelectObject: tDC drop
-                100 200 DrawLineto: self
-                200 300 DrawLineto: self
-                300 300 DrawLineto: self
+                nxy@: line-list Drawlineto: self
+                nxy@: line-list Drawlineto: self
+                nxy@: line-list Drawlineto: self
 
                 \ cleanup
                 SelectObject: tDC drop \ bursh
