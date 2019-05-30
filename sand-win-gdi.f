@@ -84,7 +84,7 @@ gdiHatchBrush hBrush1
         \ Create all non Stock Object Pens and Brushes required.
         \ ONLY PenWidth 1 allowed with PenStyles other than PS_SOLID
         128 128 128 SetRGB: hPen1 12 SetWidth: hPen1 PS_SOLID SetStyle: hPen1 Create: hPen1
-        255   0   0 SetRGB: hPen2  4 SetWidth: hPen2 PS_SOLID SetStyle: hPen2 Create: hPen2
+        255   0   0 SetRGB: hPen2  10 SetWidth: hPen2 PS_SOLID SetStyle: hPen2 Create: hPen2
 
           0 128 128 SetRGB: hBrush1 HS_DIAGCROSS SetStyle: hBrush1 Create: hBrush1
 
@@ -130,7 +130,7 @@ gdiHatchBrush hBrush1
 : DEMO  ( -- )
         Start: Sandtable-demo ;
 DEMO
-: ResetSand-Data ( -- ) 
+: ResetSand-Data ( -- )
   purgelist: line-list ;
 : RedrawSand ( -- )
   paint: Sandtable-demo ;

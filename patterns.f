@@ -25,7 +25,8 @@
 \ 04/06/2019 started coding
 
 \ require random.fs
-require sandmotorapi.fs
+\ require sandmotorapi.fs
+needs sandmotorapi.f
 
 : rndstar ( uamount -- ) \ will start at a random board location and draw random length lines from that start point radiating out
   xm-max random ym-max random 0 0 { nx ny nx1 ny1 }
@@ -46,13 +47,13 @@ require sandmotorapi.fs
   loop ;
 
 : linestar ( nx ny nangle usize uquant -- ) \ move to nx ny and draw nquant lines of nsize from nx ny location with rotation of nangle
-  0e { nx ny nangle usize uquant F: uintangle }
+  0 { nx ny nangle usize uquant uintangle }
   xposition yposition nx ny drawline .
-  360e uquant s>f f/ to uintangle
+  360e uquant s>f f/ f>s to uintangle
   uquant 0 ?do
     nx ny
-    uintangle i s>f f* nangle s>f f+ pi 180e f/ f* fcos usize s>f f* f>s nx +
-    uintangle i s>f f* nangle s>f f+ pi 180e f/ f* fsin usize s>f f* f>s ny +
+    uintangle s>f i s>f f* nangle s>f f+ fpi 180e f/ f* fcos usize s>f f* f>s nx +
+    uintangle s>f i s>f f* nangle s>f f+ fpi 180e f/ f* fsin usize s>f f* f>s ny +
     .s drawline . cr
     xposition yposition nx ny drawline .
   loop ;
