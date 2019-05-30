@@ -34,11 +34,11 @@ needs gdi/gdi.f
   #Links: self 1 - 2 / ;M
 
 ;OBJECT
-0 0     nxy!: line-list
-100 200 nxy!: line-list
-200 300 nxy!: line-list
-300 300 nxy!: line-list
-30 50 nxy!: line-list
+\ 0 0     nxy!: line-list
+\ 100 200 nxy!: line-list
+\ 200 300 nxy!: line-list
+\ 300 300 nxy!: line-list
+\ 30 50 nxy!: line-list
 
 \ Define an Object that is a child of the Class Window
 :OBJECT Sandtable-demo <SUPER WINDOW
@@ -130,5 +130,8 @@ gdiHatchBrush hBrush1
 : DEMO  ( -- )
         Start: Sandtable-demo ;
 DEMO
-
+: ResetSand-Data ( -- ) 
+  purgelist: line-list ;
+: RedrawSand ( -- )
+  paint: Sandtable-demo ;
 \ END OF LISTING

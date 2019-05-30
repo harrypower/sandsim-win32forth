@@ -61,7 +61,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
 2e fvariable xcal-threshold-b xcal-threshold-b f!
 1.6e fvariable ycal-threshold-a ycal-threshold-a f!
 2e fvariable ycal-threshold-b ycal-threshold-b f!
-10 value steps
+1 value steps \ 1 for windows simulator 10 for real sandtable
 1 value xcalreg
 1 value ycalreg
 200 value calwait
@@ -132,34 +132,25 @@ true value yposition  \ is the real location of y motor .. note if value is true
       ux xposition >
       if
         ux 1 + xposition do
-          \ silentspeed
-          ( steps xmotor timedsteps ) i to xposition
-          xposition yposition nxy!: line-list
+          i yposition nxy!: line-list i to xposition
           mslope i s>f f* bintercept f+ f>s dup dup yposition <>
           if
-            yposition - abs \ silentspeed
-            swap drop ( ymotor timedsteps ) to yposition
-            xposition yposition nxy!: line-list
+            xposition swap nxy!: line-list to yposition
           else
             drop drop
           then
         steps +loop
       else
         ux 1 - xposition -do
-          \ silentspeed
-          ( steps xmotor timedsteps ) i to xposition
-          xposition yposition nxy!: line-list
+          i yposition nxy!: line-list i to xposition
           mslope i s>f f* bintercept f+ f>s dup dup yposition <>
           if
-            yposition - abs \ silentspeed
-            swap drop ( ymotor timedsteps ) to yposition
-            xposition yposition nxy!: line-list
+            xposition swap nxy!: line-list to yposition
           else
             drop drop
           then
         steps -loop
       then
-      \ ymotor disable-motor xmotor disable-motor
       \ rounding error cleanup final draw
       xposition ux <> if ux movetox dup 200 <> if exit else drop then then
       yposition uy <> if uy movetoy dup 200 <> if exit else drop then then
