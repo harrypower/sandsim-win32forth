@@ -22,6 +22,9 @@
 \ needs sand-win-gdi.f
 \ Revisions:
 \ 5/28/2019 started coding
+\ 5/30/2019 changed steps to 1 for simulator
+\ movetoxy movetox movetoy working for simulator
+\ drawline working now 
 
 needs sand-win-gdi.f
 
@@ -183,8 +186,6 @@ true value yposition  \ is the real location of y motor .. note if value is true
 0 value nby2
 0 value pointtest
 0 value boardertest
-\ 0e fvariable mslope1 mslope1 f!
-\ 0e fvariable bintercept1 bintercept1 f!
 0e fvalue mslope1
 0e fvalue bintercept1
 : drawline ( nx1 ny1 nx2 ny2 -- nflag ) \ draw the line on the sandtable and move drawing stylus around the boarder if needed because line is behond table
@@ -271,7 +272,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
 
   pointtest 2 <> if
     \ x=0 then bintercept1 is y
-    bintercept1 f@ ym-min s>f f>= bintercept1 f@ ym-max s>f f<= and if 0 to nbx1 bintercept1 f@ f>s to nby1 1 to boardertest else 0 to boardertest then
+    bintercept1 ym-min s>f f>= bintercept1 ym-max s>f f<= and if 0 to nbx1 bintercept1 f>s to nby1 1 to boardertest else 0 to boardertest then
     \ y=mx+b
     mslope1 xm-max s>f f* bintercept1 f+ fdup fdup
     ym-min s>f f>= ym-max s>f f<= and if boardertest 0 = if xm-max to nbx1 f>s to nby1 else xm-max to nbx2 f>s to nby2 then boardertest 1 + to boardertest else fdrop then
