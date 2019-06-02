@@ -24,7 +24,7 @@
 \ 5/28/2019 started coding
 \ 5/30/2019 changed steps to 1 for simulator
 \ movetoxy movetox movetoy working for simulator
-\ drawline working now 
+\ drawline working now
 
 needs sand-win-gdi.f
 

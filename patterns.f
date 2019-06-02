@@ -46,14 +46,31 @@ needs sandmotorapi.f
     nx1 ny1 nx ny drawline .
   loop ;
 
+: rdeg>rrad ( rangle -- f: rrad ) \ rangle from fstack gets converted to rads and place back in floating stack
+  fpi 180e f/ f* ;
+
 : linestar ( nx ny nangle usize uquant -- ) \ move to nx ny and draw nquant lines of nsize from nx ny location with rotation of nangle
   0 { nx ny nangle usize uquant uintangle }
   xposition yposition nx ny drawline .
   360e uquant s>f f/ f>s to uintangle
   uquant 0 ?do
     nx ny
-    uintangle s>f i s>f f* nangle s>f f+ fpi 180e f/ f* fcos usize s>f f* f>s nx +
-    uintangle s>f i s>f f* nangle s>f f+ fpi 180e f/ f* fsin usize s>f f* f>s ny +
+    uintangle s>f i s>f f* nangle s>f f+ rdeg>rrad fcos usize s>f f* f>s nx +
+    uintangle s>f i s>f f* nangle s>f f+ rdeg>rrad fsin usize s>f f* f>s ny +
     .s drawline . cr
     xposition yposition nx ny drawline .
   loop ;
+
+0e fvalue rcx
+0e fvalue rcy
+: circle ( nx ny nangle nsize )
+  { nx ny nangle nsize }
+  nangle s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
+  nangle s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
+  rcx f>s rcy f>s movetoxy .
+  365 0 do
+    rcx f>s rcy f>s
+    nangle i + s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
+    nangle i + s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
+    rcx f>s rcy f>s drawline .
+  5 +loop ;
