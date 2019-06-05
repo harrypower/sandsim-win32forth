@@ -63,7 +63,8 @@ needs sandmotorapi.f
 
 0e fvalue rcx
 0e fvalue rcy
-: circle ( nx ny nangle nsize )
+: circle ( nx ny nangle nsize ) \ nx ny is circle center nangle is start of drawing on circle nsize is radius of circle
+  \ will draw lines between points on circle every 5 degrees
   { nx ny nangle nsize }
   nangle s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
   nangle s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
@@ -73,4 +74,17 @@ needs sandmotorapi.f
     nangle i + s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
     nangle i + s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
     rcx f>s rcy f>s drawline .
+  5 +loop ;
+
+: circle2 ( nx ny nangle nsize ) \ nx ny start point on circle nangle is angle pointing at center of circle nsize is the radius of circle
+  { nx ny nangle nsize }
+  nangle s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
+  nangle s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
+  nangle 180 + to nangle
+  nx ny movetoxy .
+  365 0 do
+    nx ny
+    nangle i + s>f rdeg>rrad fcos nsize s>f f* rcx f+ f>s to nx
+    nangle i + s>f rdeg>rrad fsin nsize s>f f* rcy f+ f>s to ny
+    nx ny drawline .
   5 +loop ;
