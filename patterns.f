@@ -49,7 +49,7 @@ needs sandmotorapi.f
 : rdeg>rrad ( rangle -- f: rrad ) \ rangle from fstack gets converted to rads and place back in floating stack
   fpi 180e f/ f* ;
 
-: linestar ( nx ny nangle usize uquant -- ) \ move to nx ny and draw nquant lines of nsize from nx ny location with rotation of nangle
+: linestar ( nx ny nangle usize uquant -- ) \ move to nx ny and draw nquant lines of usize from nx ny location with rotation of nangle
   0 { nx ny nangle usize uquant uintangle }
   xposition yposition nx ny drawline .
   360e uquant s>f f/ f>s to uintangle
@@ -63,28 +63,35 @@ needs sandmotorapi.f
 
 0e fvalue rcx
 0e fvalue rcy
-: circle ( nx ny nangle nsize ) \ nx ny is circle center nangle is start of drawing on circle nsize is radius of circle
+: circle ( nx ny nangle usize ) \ nx ny is circle center nangle is start of drawing on circle usize is radius of circle
   \ will draw lines between points on circle every 5 degrees
-  { nx ny nangle nsize }
-  nangle s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
-  nangle s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
+  { nx ny nangle usize }
+  nangle s>f rdeg>rrad fcos usize s>f f* nx s>f f+ to rcx
+  nangle s>f rdeg>rrad fsin usize s>f f* ny s>f f+ to rcy
   rcx f>s rcy f>s movetoxy .
   365 0 do
     rcx f>s rcy f>s
-    nangle i + s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
-    nangle i + s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
+    nangle i + s>f rdeg>rrad fcos usize s>f f* nx s>f f+ to rcx
+    nangle i + s>f rdeg>rrad fsin usize s>f f* ny s>f f+ to rcy
     rcx f>s rcy f>s drawline .
   5 +loop ;
 
-: circle2 ( nx ny nangle nsize ) \ nx ny start point on circle nangle is angle pointing at center of circle nsize is the radius of circle
-  { nx ny nangle nsize }
-  nangle s>f rdeg>rrad fcos nsize s>f f* nx s>f f+ to rcx
-  nangle s>f rdeg>rrad fsin nsize s>f f* ny s>f f+ to rcy
+: circle2 ( nx ny nangle usize ) \ nx ny start point on circle nangle is angle pointing at center of circle usize is the radius of circle
+  { nx ny nangle usize }
+  nangle s>f rdeg>rrad fcos usize s>f f* nx s>f f+ to rcx
+  nangle s>f rdeg>rrad fsin usize s>f f* ny s>f f+ to rcy
   nangle 180 + to nangle
   nx ny movetoxy .
   365 0 do
     nx ny
-    nangle i + s>f rdeg>rrad fcos nsize s>f f* rcx f+ f>s to nx
-    nangle i + s>f rdeg>rrad fsin nsize s>f f* rcy f+ f>s to ny
+    nangle i + s>f rdeg>rrad fcos usize s>f f* rcx f+ f>s to nx
+    nangle i + s>f rdeg>rrad fsin usize s>f f* rcy f+ f>s to ny
     nx ny drawline .
   5 +loop ;
+
+: concentric-circles ( nx ny nangle usize ustep uqnt ) \ makes concentric cirles with nx ny as center, nangle as starting location
+\ ustep is how many absolute location steps between circles with uqnt being how many circles to make
+  { nx ny nangle usize ustep uqnt }
+  uqnt 0 ?do
+    nx ny nangle usize i ustep * + circle
+  loop  ;

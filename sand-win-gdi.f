@@ -130,8 +130,8 @@ gdiHatchBrush hBrush1
 : DEMO  ( -- )
         Start: Sandtable-demo ;
 DEMO
-: ResetSand-Data ( -- )
+: Reset-Sand-Data ( -- )
   purgelist: line-list ;
-: RedrawSand ( -- )
+: Redraw-Sand ( -- )
   paint: Sandtable-demo ;
 \ END OF LISTING
