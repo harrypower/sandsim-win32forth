@@ -95,3 +95,40 @@ needs sandmotorapi.f
   uqnt 0 ?do
     nx ny nangle usize i ustep * + circle
   loop  ;
+
+: circle-circles ( nx ny nangle usize uqnt usize2 )
+  \ imagine a circle then on that circle are circles drawn around it
+  \ nx ny are the location for first circle to draw nangle from to its center with usize as the radius
+  \ uqnt is how many of these circles are drawn around the main circle that is not drawn
+  \ usize2 is the radius of the distance of the next circle that is to start but it will be drawn with usize
+  { nx ny nangle usize uqnt usize2 }
+  nx s>f to rcx
+  ny s>f to rcy
+  uqnt 0 ?do
+    rcx f>s to nx
+    rcy f>s to ny
+    nx ny nangle usize circle2
+    nangle 360 uqnt / + to nangle
+    nangle s>f rdeg>rrad fcos usize2 s>f f* nx s>f f+ to rcx
+    nangle s>f rdeg>rrad fsin usize2 s>f f* ny s>f f+ to rcy
+  loop ;
+
+: circle-spin ( nx ny nangle usize uqnt )
+\ nx ny is the center of where the circles spin around so it is an edge of all the circles
+\ uangle is start angle for the circles of usize being the radius
+\ uqnt is the amount of circles that are rotated around
+  { nx ny nangle usize uqnt }
+  uqnt 0 ?do
+    nx ny nangle usize circle2
+    nangle 360 uqnt / + to nangle
+  loop ;
+
+: ncircle-spin ( nx ny nangle usize uqnt uchange ulayers )
+\ this will use circle-spin to draw circles around the point nx ny
+\ then the next layer will be change with uchange added to usize for radius of next layer of circles
+\ ulayers is the total layers that this process is done too
+  { nx ny nangle usize uqnt uchange ulayers }
+  ulayers 0 ?do
+    nx ny nangle usize uqnt circle-spin
+    usize uchange + to usize
+  loop ;
