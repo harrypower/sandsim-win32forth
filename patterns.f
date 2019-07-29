@@ -24,9 +24,14 @@
 \ Revisions:
 \ 04/06/2019 started coding
 
-\ require random.fs
-\ require sandmotorapi.fs
-needs sandmotorapi.f
+: gforthtest ( -- nflag ) \ nflag is false if gforth is not running.  nflag is true if gforth is running
+  c" gforth" find swap drop false = if false else true then ;
+gforthtest true = [if]
+  require random.fs
+  require sandmotorapi.fs
+[else]
+  needs sandmotorapi.f
+[then]
 
 : rndstar ( uamount -- ) \ will start at a random board location and draw random length lines from that start point radiating out
   xm-max random ym-max random 0 0 { nx ny nx1 ny1 }
@@ -46,8 +51,13 @@ needs sandmotorapi.f
     nx1 ny1 nx ny drawline .
   loop ;
 
-: rdeg>rrad ( rangle -- f: rrad ) \ rangle from fstack gets converted to rads and place back in floating stack
-  fpi 180e f/ f* ;
+gforthtest true = [if]
+  : rdeg>rrad ( rangle -- f: rrad ) \ rangle from fstack gets converted to rads and place back in floating stack
+    pi 180e f/ f* ;
+[else]
+  : rdeg>rrad ( rangle -- f: rrad ) \ rangle from fstack gets converted to rads and place back in floating stack
+    fpi 180e f/ f* ;
+[then]
 
 : linestar ( nx ny nangle usize uquant -- ) \ move to nx ny and draw nquant lines of usize from nx ny location with rotation of nangle
   0 { nx ny nangle usize uquant uintangle }
