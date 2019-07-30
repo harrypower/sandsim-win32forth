@@ -1,4 +1,4 @@
-\ patterns.fs
+\ patterns.f
 
 \    Copyright (C) 2019  Philip King Smith
 
@@ -18,11 +18,15 @@
 \ patterns for drawing on sandtable
 
 \ Requires:
+\ on Gforth
 \ sandmotorapi.fs
 \ random.fs
+\ on win32forth
+\ sandmotorapi.f
 
 \ Revisions:
 \ 04/06/2019 started coding
+\ 30/07/2019 adjusted code for gforth and win32forth 
 
 : gforthtest ( -- nflag ) \ nflag is false if gforth is not running.  nflag is true if gforth is running
   c" gforth" find swap drop false = if false else true then ;
