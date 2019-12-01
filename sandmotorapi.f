@@ -189,6 +189,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
 0e fvalue mslope1
 0e fvalue bintercept1
 : drawline ( nx1 ny1 nx2 ny2 -- nflag ) \ draw the line on the sandtable and move drawing stylus around the boarder if needed because line is behond table
+\ note *** drawline can only draw a line that is fully on the sandtable aka inside the sandtable min max dimensions
 \ nx1 ny1 is start of line ... nx2 ny2 is end of line drawn
 \ nflag returns information about what happened in drawing the requested line
 \ nflag is 200 if line was drawn with no issues
@@ -287,7 +288,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
     nx1 xm-min < nx2 xm-min < and
     ny1 ym-min < ny2 ym-min < and or
     nx1 xm-max > nx2 xm-max > and
-    ny1 ym-max > ny2 ym-max > and or or if nx2 ny2 boardermove exit then \ line intersects with sandtable but is not on the sandtable
+    ny1 ym-max > ny2 ym-max > and or or if nx2 ny2 boardermove exit then \ line intersects with sandtable edge but exceeds sandtable
 
     pointtest 0 = if \ then both boarders found are simply used
       nx1 ny1 boardermove drop \ this is prefered rather then diagnal movement to first boarder
