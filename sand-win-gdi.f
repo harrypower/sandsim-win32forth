@@ -1,6 +1,7 @@
 \ sand-win-gdi.F    Sandtable tester for windows using GDI and win32forth
 \ used original example figgraph.f from win32forth
-\ Written by David R. Pochin
+\ Original Written by David R. Pochin
+\ Adjusted for my perposes by Philip Smith
 
 \ Used to test sandtable drawing patterns
 \ 05/26/2019 started coding
