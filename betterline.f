@@ -26,6 +26,7 @@
 
 \ Revisions:
 \ 12/01/2019 started coding
+\ 12/07/2019 started new aligorition
 
 : gforthtest ( -- nflag ) \ nflag is false if gforth is not running.  nflag is true if gforth is running
   c" gforth" find swap drop false = if false else true then ;
@@ -35,3 +36,90 @@ gforthtest true = [if]
 [else]
   needs sandmotorapi.f
 [then]
+
+0 value nbasex1
+0 value nbasey1
+0 value nbasex2
+0 value nbasey2
+0 value nxj1
+0 value nyj1
+0 value nxj2
+0 value nyj2
+: order-line ( nx1 ny1 nx2 ny2 -- nx ny nx' ny' ) \ reorder input x y such that nx ny is closest to current xposition yposition
+  { nx1 ny1 nx2 ny2 }
+  xposition yposition nx1 ny1 distance?
+  xposition yposition nx2 ny2 distance?
+  < if
+    nx1 ny1 nx2 ny2
+  else
+    nx2 ny2 nx1 ny1
+  then ;
+
+: offset-line ( nx1 ny1 nx2 ny2 nxoffset nyoffset -- nx ny nx' ny' ) \ add noffset to quardinates
+  { nx1 ny1 nx2 ny2 nxoffset nyoffset }
+  nx1 nxoffset +
+  ny1 nyoffset +
+  nx2 nxoffset +
+  ny2 nyoffset + ;
+
+: deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
+  s>f fpi 180e f/ f* ;
+
+: (calc-c) ( uangle uqnt -- utotal ustep ) \ used by lines to be the distance offset calulation
+  { uangle uqnt }
+  uangle 90 mod dup
+  deg>rads fsin deg>rads fcos f+ xm-max s>f f*
+  fdup uqnt s>f f/
+  f>s f>s swap ;
+: (calc-x) ( uc uangle -- nx ) \ used by lines to calculate x offset from uangle and c distance from calc-c
+  deg>rads fsin s>f f* f>s ;
+: (calc-y) ( uc uangle -- ny ) \ used by lines to calculate y offset from uangle and c distance from calc-c
+  90 swap - deg>rads fsin s>f f* f>s ;
+
+: lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
+  { nx ny uangle uqnt }
+  uangle 360 mod to uangle
+
+;
+: lines ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
+  0 0 1500000 { nx ny uangle uqnt nb na usize }
+  uangle 360 mod to uangle
+  uangle 0 <> if
+    uangle deg>rads   \ remember fsin uses rads not angles so convert
+    fsin usize s>f f*
+    90 deg>rads
+    fsin f/ f>s to na
+    90 uangle - deg>rads
+    fsin na s>f f*
+    uangle deg>rads
+    fsin f/ f>s to nb
+  else
+    usize to nb
+    0 to na
+  then
+  nx nb - ny na + \ - direction from nx ny
+  to nbasey1 to nbasex1
+  nx nb + ny na - \ + direction from nx ny
+  to nbasey2 to nbasex2
+  \ this is the line that intersects with nx ny point
+  uangle uqnt (calc-c) to usize drop
+  nbasex1 nbasey1 nbasex2 nbasey2
+  uangle uqnt (calc-c) drop uangle (calc-x) 0 swap -
+  uangle uqnt (calc-c) drop uangle (calc-y) 0 swap -
+  offset-line \ calculate start line with offset from base line
+  to nyj2 to nxj2 to nyj1 to nxj1
+  uqnt 2 * 0 ?do
+    i usize * uangle (calc-x) to na
+    i usize * uangle (calc-y) to nb
+    nxj1 nyj1 nxj2 nyj2 na nb offset-line
+    .s drawline . cr
+    nxj2 nyj2 nxj1 nyj1 na nb offset-line
+    usize uangle (calc-x)
+    usize uangle (calc-y)
+    offset-line \ add offset for second line
+    .s drawline . cr
+  2 +loop
+  \ border ." boarder " . cr
+  nbasex1 nbasey1 nbasex2 nbasey2 order-line
+  .s drawline . cr
+  nx ny movetoxy . cr  ;
