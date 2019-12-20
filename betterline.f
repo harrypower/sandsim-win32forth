@@ -77,10 +77,35 @@ gforthtest true = [if]
   90 swap - deg>rads fsin s>f f* f>s ;
 
 : lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
-  { nx ny uangle uqnt }
-  uangle 360 mod to uangle
+0 0 1500000 { nx ny uangle uqnt nb na usize }
+uangle 360 mod to uangle
+uangle 0 <> if
+  uangle deg>rads   \ remember fsin uses rads not angles so convert
+  fsin usize s>f f*
+  90 deg>rads
+  fsin f/ f>s to na
+  90 uangle - deg>rads
+  fsin na s>f f*
+  uangle deg>rads
+  fsin f/ f>s to nb
+else
+  usize to nb
+  0 to na
+then
+nx nb - ny na + \ - direction from nx ny
+to nbasey1 to nbasex1
+nx nb + ny na - \ + direction from nx ny
+to nbasey2 to nbasex2
+\ this is the line that intersects with nx ny point
+\ now calculate Xn or distance from xm-max and ym-max perpendiculare to this base line
 
-;
+
+
+
+nbasex1 nbasey1 nbasex2 nbasey2 order-line
+.s drawline . cr
+nx ny movetoxy . cr  ;
+
 : lines ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
   0 0 1500000 { nx ny uangle uqnt nb na usize }
   uangle 360 mod to uangle
