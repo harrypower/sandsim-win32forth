@@ -118,7 +118,7 @@ gforthtest true = [if]
   \ solve y intercept for tablemax
   fslope xm-max s>f f*
   ym-max s>f fswap f- \ ( f: fYintereceptmax )
-  180 90 unangle 90 mod + - deg>rads
+  180 90 uangle 90 mod + - deg>rads
   fsin f* fdup to ftablemax ( f: ftablemax )
   uqnt s>f f/ fdup to fdpl  ( f: fdpl )
   fXn f/ to fltomin
