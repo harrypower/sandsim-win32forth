@@ -76,8 +76,15 @@ gforthtest true = [if]
 : (calc-y) ( uc uangle -- ny ) \ used by lines to calculate y offset from uangle and c distance from calc-c
   90 swap - deg>rads fsin s>f f* f>s ;
 
+0e fvalue fslope
+0e fvalue fXn
+0e fvalue ftablemax
+0e fvalue fdpl ( dots per line to calculate distance to next line )
+0e fvalue fltomin ( lines to min this is how many lines to draw from base line to the edge of the sandtable in the minimum direction )
+
 : lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
   0 0 1500000 { nx ny uangle uqnt nb na usize }
+  uqnt 1 + to uqnt
   uangle 360 mod to uangle
   uangle 0 <> if
     uangle deg>rads   \ remember fsin uses rads not angles so convert
@@ -100,14 +107,21 @@ gforthtest true = [if]
   \ calculate slope from this base line
   nbasey1 nbasey2 - s>f
   nbasex1 nbasex2 - s>f
-  f/ \ slope in floating stack
+  f/ \ slope in floating stack ( f: fslope )
+  fdup to fslope
   \ use B = Y - ( m * X ) to solve for this y intercept
   nx s>f f*
-  ny s>f fswap f- \ y intercept in floating stack
+  ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
   180 90 uangle 90 mod + - deg>rads
-  fsin f* \ xn is now on floating stack
-  xm-max xm-min - s>f fdup f*
-  ym-max ym-min - s>f fdup f* f+ fsqrt
+  fsin f* \ xn is now on floating stack ( f: fXn )
+  to fXn
+  \ solve y intercept for tablemax
+  fslope xm-max s>f f*
+  ym-max s>f fswap f- \ ( f: fYintereceptmax )
+  180 90 unangle 90 mod + - deg>rads
+  fsin f* fdup to ftablemax ( f: ftablemax )
+  uqnt s>f f/ fdup to fdpl  ( f: fdpl )
+  fXn f/ to fltomin
 
   \ nbasex1 nbasey1 nbasex2 nbasey2 order-line
   \ .s drawline . cr
