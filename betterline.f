@@ -77,34 +77,42 @@ gforthtest true = [if]
   90 swap - deg>rads fsin s>f f* f>s ;
 
 : lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
-0 0 1500000 { nx ny uangle uqnt nb na usize }
-uangle 360 mod to uangle
-uangle 0 <> if
-  uangle deg>rads   \ remember fsin uses rads not angles so convert
-  fsin usize s>f f*
-  90 deg>rads
-  fsin f/ f>s to na
-  90 uangle - deg>rads
-  fsin na s>f f*
-  uangle deg>rads
-  fsin f/ f>s to nb
-else
-  usize to nb
-  0 to na
-then
-nx nb - ny na + \ - direction from nx ny
-to nbasey1 to nbasex1
-nx nb + ny na - \ + direction from nx ny
-to nbasey2 to nbasex2
-\ this is the line that intersects with nx ny point
-\ now calculate Xn or distance from xm-max and ym-max perpendiculare to this base line
+  0 0 1500000 { nx ny uangle uqnt nb na usize }
+  uangle 360 mod to uangle
+  uangle 0 <> if
+    uangle deg>rads   \ remember fsin uses rads not angles so convert
+    fsin usize s>f f*
+    90 deg>rads
+    fsin f/ f>s to na
+    90 uangle - deg>rads
+    fsin na s>f f*
+    uangle deg>rads
+    fsin f/ f>s to nb
+  else
+    usize to nb
+    0 to na
+  then
+  nx nb - ny na + \ - direction from nx ny
+  to nbasey1 to nbasex1
+  nx nb + ny na - \ + direction from nx ny
+  to nbasey2 to nbasex2
+  \ this is the line that intersects with nx ny point
+  \ calculate slope from this base line
+  nbasey1 nbasey2 - s>f
+  nbasex1 nbasex2 - s>f
+  f/ \ slope in floating stack
+  \ use B = Y - ( m * X ) to solve for this y intercept
+  nx s>f f*
+  ny s>f fswap f- \ y intercept in floating stack
+  180 90 uangle 90 mod + - deg>rads
+  fsin f* \ xn is now on floating stack
+  xm-max xm-min - s>f fdup f*
+  ym-max ym-min - s>f fdup f* f+ fsqrt
 
-
-
-
-nbasex1 nbasey1 nbasex2 nbasey2 order-line
-.s drawline . cr
-nx ny movetoxy . cr  ;
+  \ nbasex1 nbasey1 nbasex2 nbasey2 order-line
+  \ .s drawline . cr
+  \ nx ny movetoxy . cr
+  ;
 
 : lines ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
   0 0 1500000 { nx ny uangle uqnt nb na usize }
