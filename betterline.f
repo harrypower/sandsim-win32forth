@@ -104,35 +104,44 @@ gforthtest true = [if]
   nx nb + ny na - \ + direction from nx ny
   to nbasey2 to nbasex2
   \ this is the line that intersects with nx ny point
-  \ calculate slope from this base line
-  nbasey1 nbasey2 - s>f
-  nbasex1 nbasex2 - s>f
-  f/ \ slope in floating stack ( f: fslope )
-  fdup to fslope
-  \ use B = Y - ( m * X ) to solve for this y intercept
-  nx s>f f*
-  ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
-  180 90 uangle 90 mod + - deg>rads
-  fsin f* \ xn is now on floating stack ( f: fXn )
-  to fXn
-  \ solve y intercept for tablemax
-  fslope xm-max s>f f*
-  ym-max s>f fswap f- \ ( f: fYintereceptmax )
-  180 90 uangle 90 mod + - deg>rads
-  fsin f* fdup to ftablemax ( f: ftablemax )
-  uqnt s>f f/ fdup to fdpl  ( f: fdpl )
-  fXn fswap f/ fdup to fltomin    ( f: fltomin )
-  f>s fdpl f>s * dup uangle
-  (calc-x) to na
-  uangle (calc-y) to nb
-  nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+  uangle 90 mod 0 = if
+    uangle 0 = uangle 180 = or if
+    \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 0 or 180 degrees horizontal line
+    then
+    uangle 90 = uangle 270 = or if
+    \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 90 or 270 degrees vertical line 
+    then
+  else
+    \ calculate slope from this base line
+    nbasey1 nbasey2 - s>f
+    nbasex1 nbasex2 - s>f
+    f/ \ slope in floating stack ( f: fslope )
+    fdup to fslope
+    \ use B = Y - ( m * X ) to solve for this y intercept
+    nx s>f f*
+    ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
+    180 90 uangle 90 mod + - deg>rads
+    fsin f* \ xn is now on floating stack ( f: fXn )
+    to fXn
+    \ solve y intercept for tablemax
+    fslope xm-max s>f f*
+    ym-max s>f fswap f- \ ( f: fYintereceptmax )
+    180 90 uangle 90 mod + - deg>rads
+    fsin f* fdup to ftablemax ( f: ftablemax )
+    uqnt s>f f/ fdup to fdpl  ( f: fdpl )
+    fXn fswap f/ fdup to fltomin    ( f: fltomin )
+    f>s fdpl f>s * dup uangle
+    (calc-x) to na
+    uangle (calc-y) to nb
+    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+  then
   to nyj2 to nxj2 to nyj1 to nxj1
   uqnt 0 ?do
       i fdpl f>s * dup uangle (calc-x) to na
       uangle (calc-y) to nb
       nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
   loop
-
+  \ redraw base line and place ball at nx ny location
   nbasex1 nbasey1 nbasex2 nbasey2 order-line .s drawline . cr
   nx ny movetoxy . cr
   ;
