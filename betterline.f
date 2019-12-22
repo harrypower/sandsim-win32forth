@@ -121,7 +121,12 @@ gforthtest true = [if]
   180 90 uangle 90 mod + - deg>rads
   fsin f* fdup to ftablemax ( f: ftablemax )
   uqnt s>f f/ fdup to fdpl  ( f: fdpl )
-  fXn f/ to fltomin
+  fXn fswap f/ fdup to fltomin    ( f: fltomin )
+  f>s fdpl f>s * dup uangle
+  (calc-x) to na
+  uangle (calc-y) to nb
+  nbasex1 nbasey1 nbasex2 nbasey2 na nb offset-line order-line
+  .s drawline . cr
 
   \ nbasex1 nbasey1 nbasex2 nbasey2 order-line
   \ .s drawline . cr
