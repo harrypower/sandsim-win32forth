@@ -104,14 +104,36 @@ gforthtest true = [if]
   nx nb + ny na - \ + direction from nx ny
   to nbasey2 to nbasex2
   \ this is the line that intersects with nx ny point
-  uangle 90 mod 0 = if
+  uangle 90 mod 0 = if \ this is for angles 0,90,180 or 270 only
     uangle 0 = uangle 180 = or if
     \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 0 or 180 degrees horizontal line
+    ym-max s>f uqnt s>f f/ to fdpl
+    ny s>f fdpl f/ to fltomin
+    fltomin f>s fdpl f>s * to nb
+    0 to na
+    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+    to nyj2 to nxj2 to nyj1 to nxj1
+    uqnt 0 ?do
+        0 to na
+        i fdpl f>s * to nb
+        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+    loop
     then
     uangle 90 = uangle 270 = or if
-    \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 90 or 270 degrees vertical line 
+    \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 90 or 270 degrees vertical line
+    xm-max s>f uqnt s>f f/ to fdpl
+    nx s>f fdpl f/ to fltomin
+    0 to nb
+    fltomin f>s fdpl f>s * to na
+    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+    to nyj2 to nxj2 to nyj1 to nxj1
+    uqnt 0 ?do
+        i fdpl f>s * to na
+        0 to nb
+        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+    loop
     then
-  else
+  else \ this is for all angles other then 0 90 180 270
     \ calculate slope from this base line
     nbasey1 nbasey2 - s>f
     nbasex1 nbasex2 - s>f
@@ -134,13 +156,13 @@ gforthtest true = [if]
     (calc-x) to na
     uangle (calc-y) to nb
     nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+    to nyj2 to nxj2 to nyj1 to nxj1
+    uqnt 0 ?do
+        i fdpl f>s * dup uangle (calc-x) to na
+        uangle (calc-y) to nb
+        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+    loop
   then
-  to nyj2 to nxj2 to nyj1 to nxj1
-  uqnt 0 ?do
-      i fdpl f>s * dup uangle (calc-x) to na
-      uangle (calc-y) to nb
-      nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
-  loop
   \ redraw base line and place ball at nx ny location
   nbasex1 nbasey1 nbasex2 nbasey2 order-line .s drawline . cr
   nx ny movetoxy . cr
