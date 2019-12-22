@@ -125,12 +125,16 @@ gforthtest true = [if]
   f>s fdpl f>s * dup uangle
   (calc-x) to na
   uangle (calc-y) to nb
-  nbasex1 nbasey1 nbasex2 nbasey2 na nb offset-line order-line
-  .s drawline . cr
+  nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+  to nyj2 to nxj2 to nyj1 to nxj1
+  uqnt 0 ?do
+      i fdpl f>s * dup uangle (calc-x) to na
+      uangle (calc-y) to nb
+      nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+  loop
 
-  \ nbasex1 nbasey1 nbasex2 nbasey2 order-line
-  \ .s drawline . cr
-  \ nx ny movetoxy . cr
+  nbasex1 nbasey1 nbasex2 nbasey2 order-line .s drawline . cr
+  nx ny movetoxy . cr
   ;
 
 : lines ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
