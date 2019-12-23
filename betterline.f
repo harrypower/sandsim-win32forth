@@ -84,7 +84,7 @@ gforthtest true = [if]
 
 : lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
   0 0 1500000 { nx ny uangle uqnt nb na usize }
-  uqnt 1 + to uqnt
+  \ uqnt 1 + to uqnt
   uangle 360 mod to uangle
   uangle 0 <> if
     uangle deg>rads   \ remember fsin uses rads not angles so convert
@@ -141,14 +141,38 @@ gforthtest true = [if]
     fdup to fslope
     \ use B = Y - ( m * X ) to solve for this y intercept
     nx s>f f*
-    ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
-    180 90 uangle 90 mod + - deg>rads
+    ny s>f fswap f- fabs \ y intercept in floating stack  ( f: fYintercept )
+    uangle 90 > uangle 180 < and if
+      90 180 uangle - -
+    then
+    uangle 0 > uangle 90 < and if
+      180 90 uangle + -
+    then
+    uangle 180 > uangle 270 < and if
+      180 90 180 uangle - +  -
+    then
+    uangle 270 > uangle 360 < and if
+      90 360 uangle - -
+    then
+    deg>rads
     fsin f* \ xn is now on floating stack ( f: fXn )
     to fXn
     \ solve y intercept for tablemax
     fslope xm-max s>f f*
-    ym-max s>f fswap f- \ ( f: fYintereceptmax )
-    180 90 uangle 90 mod + - deg>rads
+    ym-max s>f fswap f- fabs  \ ( f: fYintereceptmax )
+    uangle 90 > uangle 180 < and if
+      90 180 uangle - -
+    then
+    uangle 0 > uangle 90 < and if
+      180 90 uangle + -
+    then
+    uangle 180 > uangle 270 < and if
+      180 90 180 uangle - +  -
+    then
+    uangle 270 > uangle 360 < and if
+      90 360 uangle - -
+    then
+    deg>rads
     fsin f* fdup to ftablemax ( f: ftablemax )
     uqnt s>f f/ fdup to fdpl  ( f: fdpl )
     fXn fswap f/ fdup to fltomin    ( f: fltomin )
