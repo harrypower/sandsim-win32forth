@@ -85,7 +85,11 @@ gforthtest true = [if]
 : lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
   0 0 1500000 { nx ny uangle uqnt nb na usize }
   \ uqnt 1 + to uqnt
-  uangle 360 mod to uangle
+  uangle 360 mod 180 >= if
+    uangle 360 mod 180 - to uangle
+  else
+    uangle 360 mod to uangle
+  then
   uangle 0 <> if
     uangle deg>rads   \ remember fsin uses rads not angles so convert
     fsin usize s>f f*
@@ -104,34 +108,34 @@ gforthtest true = [if]
   nx nb + ny na - \ + direction from nx ny
   to nbasey2 to nbasex2
   \ this is the line that intersects with nx ny point
-  uangle 90 mod 0 = if \ this is for angles 0,90,180 or 270 only
-    uangle 0 = uangle 180 = or if
-    \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 0 or 180 degrees horizontal line
-    ym-max s>f uqnt s>f f/ to fdpl
-    ny s>f fdpl f/ to fltomin
-    fltomin f>s fdpl f>s * to nb
-    0 to na
-    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
-    to nyj2 to nxj2 to nyj1 to nxj1
-    uqnt 0 ?do
-        0 to na
-        i fdpl f>s * to nb
-        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
-    loop
+  uangle 90 =  uangle 0 = or if \ this is for angles 0,90,180 or 270 only
+    uangle 0 = if
+      \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 0 or 180 degrees horizontal line
+      ym-max s>f uqnt s>f f/ to fdpl
+      ny s>f fdpl f/ to fltomin
+      fltomin f>s fdpl f>s * to nb
+      0 to na
+      nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+      to nyj2 to nxj2 to nyj1 to nxj1
+      uqnt 0 ?do
+          0 to na
+          i fdpl f>s * to nb
+          nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+      loop
     then
-    uangle 90 = uangle 270 = or if
-    \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 90 or 270 degrees vertical line
-    xm-max s>f uqnt s>f f/ to fdpl
-    nx s>f fdpl f/ to fltomin
-    0 to nb
-    fltomin f>s fdpl f>s * to na
-    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
-    to nyj2 to nxj2 to nyj1 to nxj1
-    uqnt 0 ?do
-        i fdpl f>s * to na
-        0 to nb
-        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
-    loop
+    uangle 90 = if
+      \ need to solve fdpl and nxj1,nxj2,nyj1,nyj2 amounts for 90 or 270 degrees vertical line
+      xm-max s>f uqnt s>f f/ to fdpl
+      nx s>f fdpl f/ to fltomin
+      0 to nb
+      fltomin f>s fdpl f>s * to na
+      nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+      to nyj2 to nxj2 to nyj1 to nxj1
+      uqnt 0 ?do
+          i fdpl f>s * to na
+          0 to nb
+          nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+      loop
     then
   else \ this is for all angles other then 0 90 180 270
     \ calculate slope from this base line
@@ -148,12 +152,6 @@ gforthtest true = [if]
     uangle 0 > uangle 90 < and if
       180 90 uangle + -
     then
-    uangle 180 > uangle 270 < and if
-      180 90 180 uangle - +  -
-    then
-    uangle 270 > uangle 360 < and if
-      90 360 uangle - -
-    then
     deg>rads
     fsin f* \ xn is now on floating stack ( f: fXn )
     to fXn
@@ -165,12 +163,6 @@ gforthtest true = [if]
     then
     uangle 0 > uangle 90 < and if
       180 90 uangle + -
-    then
-    uangle 180 > uangle 270 < and if
-      180 90 180 uangle - +  -
-    then
-    uangle 270 > uangle 360 < and if
-      90 360 uangle - -
     then
     deg>rads
     fsin f* fdup to ftablemax ( f: ftablemax )
