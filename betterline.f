@@ -76,6 +76,20 @@ gforthtest true = [if]
 : (calc-y) ( uc uangle -- ny ) \ used by lines to calculate y offset from uangle and c distance from calc-c
   90 swap - deg>rads fsin s>f f* f>s ;
 
+: (calc-x)2 ( uc uangle -- nx )
+  { uc uangle } uangle 90 >= if
+    180 uangle - deg>rads fsin uc s>f f* f>s
+  else
+    uangle deg>rads fsin uc s>f f* f>s
+  then ;
+
+: (calc-y)2 ( uc uangle -- ny )
+  { uc uangle } uangle 90 >= if
+    90 180 uangle - - deg>rads fsin uc s>f f* f>s
+  else
+    90 uangle - deg>rads fsin uc s>f f* f>s
+  then ;
+
 0e fvalue fslope
 0e fvalue fXn
 0e fvalue ftablemax
@@ -169,14 +183,14 @@ gforthtest true = [if]
     uqnt s>f f/ fdup to fdpl  ( f: fdpl )
     fXn fswap f/ fdup to fltomin    ( f: fltomin )
     f>s fdpl f>s * dup
-    uangle (calc-x) to na
-    uangle (calc-y) to nb
+    uangle (calc-x)2 to na
+    uangle (calc-y)2 to nb
     nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
     to nyj2 to nxj2 to nyj1 to nxj1
     uqnt 0 ?do
         i fdpl f>s * dup
-        uangle (calc-x) to na
-        uangle (calc-y) to nb
+        uangle (calc-x)2 to na
+        uangle (calc-y)2 to nb
         nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
     loop
   then
