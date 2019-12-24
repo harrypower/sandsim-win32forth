@@ -82,6 +82,8 @@ gforthtest true = [if]
   else
     uangle deg>rads fsin uc s>f f* f>s
   then ;
+: (calc-x)<90 ( uc uangle -- nx )  \ find na for angles less then 90
+  deg>rads fsin s>f f* f>s ;
 
 : (calc-y)2 ( uc uangle -- ny )
   { uc uangle } uangle 90 >= if
@@ -89,6 +91,9 @@ gforthtest true = [if]
   else
     90 uangle - deg>rads fsin uc s>f f* f>s
   then ;
+
+: (calc-y)<90 ( uc uangle -- ny ) \ find nb for angles less then 90
+  90 swap - deg>rads fsin s>f f* f>s ;
 
 0e fvalue fslope
 0e fvalue fXn
@@ -151,48 +156,39 @@ gforthtest true = [if]
           nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
       loop
     then
-  else \ this is for all angles other then 0 90 180 270
-    \ calculate slope from this base line
-    nbasey1 nbasey2 - s>f
-    nbasex1 nbasex2 - s>f
-    f/ \ slope in floating stack ( f: fslope )
-    fdup to fslope
-    \ use B = Y - ( m * X ) to solve for this y intercept
-    nx s>f f*
-    ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
-    uangle 90 > uangle 180 < and if
-      90 180 uangle - -
+  else
+      \ calculate slope from this base line
+      nbasey1 nbasey2 - s>f
+      nbasex1 nbasex2 - s>f
+      f/ \ slope in floating stack ( f: fslope )
+      fdup to fslope
+      \ note fslope is correct for all angles used
+    uangle < 90 if \ this is for angles < 90
+      \ use B = Y - ( m * X ) to solve for this y intercept
+      nx s>f f*
+      ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
+      90 uangle - deg>rads
+      fsin f* to fXn
+      \ solve y intercept for tablemax
+      fslope xm-max s>f f*
+      ym-max s>f fswap f-   \ ( f: fYintereceptmax )
+      90 uangle - deg>rads
+      fsin f*  fdup to ftablemax ( f: ftablemax )
+      uqnt s>f f/ fdup to fdpl  ( f: fdpl )
+      fXn fswap f/ fdup to fltomin    ( f: fltomin )
+      f>s fdpl f>s * dup
+      uangle (calc-x)<90 to na
+      uangle (calc-y)<90 to nb
+      nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+      to nyj2 to nxj2 to nyj1 to nxj1
+      uqnt 0 ?do
+          i fdpl f>s * dup
+          uangle (calc-x)<90 to na
+          uangle (calc-y)<90 to nb
+          nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+      loop
+    else \ this if for angles > 90
     then
-    uangle 0 > uangle 90 < and if
-      180 90 uangle + -
-    then
-    deg>rads
-    fsin f* \ xn is now on floating stack ( f: fXn )
-    fabs to fXn
-    \ solve y intercept for tablemax
-    fslope xm-max s>f f*
-    ym-max s>f fswap f-   \ ( f: fYintereceptmax )
-    uangle 90 > uangle 180 < and if
-      90 180 uangle - -
-    then
-    uangle 0 > uangle 90 < and if
-      180 90 uangle + -
-    then
-    deg>rads
-    fsin f* fabs fdup to ftablemax ( f: ftablemax )
-    uqnt s>f f/ fabs fdup to fdpl  ( f: fdpl )
-    fXn fswap f/ fabs fdup to fltomin    ( f: fltomin )
-    f>s fdpl f>s * dup
-    uangle (calc-x)2 to na
-    uangle (calc-y)2 to nb
-    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
-    to nyj2 to nxj2 to nyj1 to nxj1
-    uqnt 0 ?do
-        i fdpl f>s * dup
-        uangle (calc-x)2 to na
-        uangle (calc-y)2 to nb
-        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
-    loop
   then
   \ redraw base line and place ball at nx ny location
   nbasex1 nbasey1 nbasex2 nbasey2 order-line .s drawline . cr
