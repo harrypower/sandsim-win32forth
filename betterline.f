@@ -78,7 +78,7 @@ gforthtest true = [if]
 
 : (calc-x)2 ( uc uangle -- nx )
   { uc uangle } uangle 90 >= if
-    180 uangle - deg>rads fsin uc s>f f* f>s
+    180 90 90 180 uangle - - + - deg>rads fsin uc s>f f* f>s
   else
     uangle deg>rads fsin uc s>f f* f>s
   then ;
@@ -159,7 +159,7 @@ gforthtest true = [if]
     fdup to fslope
     \ use B = Y - ( m * X ) to solve for this y intercept
     nx s>f f*
-    ny s>f fswap f- fabs \ y intercept in floating stack  ( f: fYintercept )
+    ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
     uangle 90 > uangle 180 < and if
       90 180 uangle - -
     then
@@ -168,10 +168,10 @@ gforthtest true = [if]
     then
     deg>rads
     fsin f* \ xn is now on floating stack ( f: fXn )
-    to fXn
+    fabs to fXn
     \ solve y intercept for tablemax
     fslope xm-max s>f f*
-    ym-max s>f fswap f- fabs  \ ( f: fYintereceptmax )
+    ym-max s>f fswap f-   \ ( f: fYintereceptmax )
     uangle 90 > uangle 180 < and if
       90 180 uangle - -
     then
@@ -179,9 +179,9 @@ gforthtest true = [if]
       180 90 uangle + -
     then
     deg>rads
-    fsin f* fdup to ftablemax ( f: ftablemax )
-    uqnt s>f f/ fdup to fdpl  ( f: fdpl )
-    fXn fswap f/ fdup to fltomin    ( f: fltomin )
+    fsin f* fabs fdup to ftablemax ( f: ftablemax )
+    uqnt s>f f/ fabs fdup to fdpl  ( f: fdpl )
+    fXn fswap f/ fabs fdup to fltomin    ( f: fltomin )
     f>s fdpl f>s * dup
     uangle (calc-x)2 to na
     uangle (calc-y)2 to nb
