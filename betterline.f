@@ -78,7 +78,7 @@ gforthtest true = [if]
 
 : (calc-x)2 ( uc uangle -- nx ) \ find na
   { uc uangle } uangle 90 >= if
-    180 uangle - deg>rads fsin
+    180 90 90 180 uangle - - + - deg>rads fsin
   else
     uangle deg>rads fsin
   then
@@ -97,7 +97,7 @@ gforthtest true = [if]
 0e fvalue ftablemax
 0e fvalue fdpl ( dots per line to calculate distance to next line )
 0e fvalue fltomin ( lines to min this is how many lines to draw from base line to the edge of the sandtable in the minimum direction )
-
+0e fvalue fYintercept
 : lines2 ( nx ny uangle uqnt -- ) \ draw uqnt lines with one intersecting with nx ny with uangle from horizontal
   0 0 1500000 { nx ny uangle uqnt nb na usize }
   \ uqnt 1 + to uqnt
@@ -161,35 +161,46 @@ gforthtest true = [if]
     fdup to fslope
     \ use B = Y - ( m * X ) to solve for this y intercept
     nx s>f f*
-    ny s>f fswap f- \ y intercept in floating stack  ( f: fYintercept )
+    ny s>f fswap f- fdup to fYintercept \ y intercept in floating stack  ( f: fYintercept )
     uangle 90 < if
-      90 uangle -
-    else
-      uangle 90 -
+      90 uangle - deg>rads fsin f* to fXn
+      \ solve y intercept for tablemax
+      fslope xm-max s>f f*
+      ym-max s>f fswap f-  \ ( f: fYintereceptmax )
+      90 uangle - deg>rads fsin f*  fdup to ftablemax ( f: ftablemax )
+      uqnt s>f f/ fdup to fdpl  ( f: fdpl )
+      fXn fswap f/ fdup to fltomin    ( f: fltomin )
+      f>s fdpl f>s * dup
+      uangle (calc-x)2 to na
+      uangle (calc-y)2 to nb
+      nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
+      to nyj2 to nxj2 to nyj1 to nxj1
+      uqnt 0 ?do
+          i fdpl f>s * dup
+          uangle (calc-x)2 to na
+          uangle (calc-y)2 to nb
+          nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
+      loop
+    else \ this is for uangle > 90 < 180
+      \ fslope known, fYintercept know
+      \ solve for xn
+      ym-max s>f fYintercept f-
+      90 180 uangle - - deg>rads fsin f* to fXn
+      nx ny xm-max ym-min distance? s>f fxn f+ fdup to ftablemax
+      uqnt s>f f/ fdup to fdpl
+      fXn fswap f/ fdup to fltomin
+      f>s fdpl f>s * dup
+      uangle (calc-x)2 to na
+      uangle (calc-y)2 to nb
+      nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb  offset-line order-line
+      to nyj2 to nxj2 to nyj1 to nxj1
+      uqnt 0 ?do
+          i fdpl f>s * dup
+          uangle (calc-x)2 to na
+          uangle (calc-y)2 to nb
+          nxj1 nyj1 nxj2 nyj2 na nb 0 swap - offset-line order-line .s drawline . cr
+      loop
     then
-    deg>rads fsin f* to fXn
-    \ solve y intercept for tablemax
-    fslope xm-max s>f f*
-    ym-max s>f fswap f-   \ ( f: fYintereceptmax )
-    uangle 90 < if
-      90 uangle -
-    else
-      uangle 90 -
-    then
-    deg>rads fsin f*  fdup to ftablemax ( f: ftablemax )
-    uqnt s>f f/ fdup to fdpl  ( f: fdpl )
-    fXn fswap f/ fdup to fltomin    ( f: fltomin )
-    f>s fdpl f>s * dup
-    uangle (calc-x)2 to na
-    uangle (calc-y)2 to nb
-    nbasex1 nbasey1 nbasex2 nbasey2 na 0 swap - nb 0 swap - offset-line order-line
-    to nyj2 to nxj2 to nyj1 to nxj1
-    uqnt 0 ?do
-        i fdpl f>s * dup
-        uangle (calc-x)2 to na
-        uangle (calc-y)2 to nb
-        nxj1 nyj1 nxj2 nyj2 na nb offset-line order-line .s drawline . cr
-    loop
   then
   \ redraw base line and place ball at nx ny location
   nbasex1 nbasey1 nbasex2 nbasey2 order-line .s drawline . cr
