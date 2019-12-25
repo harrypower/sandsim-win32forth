@@ -62,8 +62,13 @@ gforthtest true = [if]
   nx2 nxoffset +
   ny2 nyoffset + ;
 
-: deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
-  s>f fpi 180e f/ f* ;
+gforthtest true = [if]
+  : deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
+    s>f pi 180e f/ f* ;
+[else]
+  : deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
+    s>f fpi 180e f/ f* ;
+[then]
 
 : (calc-na) ( uc uangle -- nx ) \ find na
   { uc uangle } uangle 90 >= if
