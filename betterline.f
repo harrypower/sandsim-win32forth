@@ -70,6 +70,12 @@ gforthtest true = [if]
     s>f fpi 180e f/ f* ;
 [then]
 
+: corrodinates? ( nx1 ny1 ndistance uangle -- nx2 ny2 ) \ given nx1 ny1 ndistance and uangle return the nx2 and ny2 corrodiantes
+  0 0 { nx1 ny1 ndistance uangle na nb }
+  ndistance 360 uangle - deg>rads s>f fsin f* f>s to na
+  ndistance 360 uangle - deg>rads s>f fcos f* f>s to nb
+  nx1 na + ny1 nb + ;
+
 : (calc-na) ( uc uangle -- nx ) \ find na
   { uc uangle } uangle 90 >= if
     180 90 90 180 uangle - - + - deg>rads fsin
