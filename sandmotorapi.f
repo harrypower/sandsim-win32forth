@@ -490,7 +490,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
       \ fslope known, fYintercept know
       \ solve for xn
       ym-max s>f fYintercept f-
-      90 180 uangle - - deg>rads fsin f* to fXn 
+      90 180 uangle - - deg>rads fsin f* to fXn
       nx ny xm-max ym-min distance? s>f fxn f+ fdup to ftablemax
       uqnt s>f f/ fdup to fdpl
       fXn fswap f/ fdup to fltomin
