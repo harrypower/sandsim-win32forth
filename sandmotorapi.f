@@ -372,13 +372,8 @@ true value yposition  \ is the real location of y motor .. note if value is true
   nx2 nxoffset +
   ny2 nyoffset + ;
 
-gforthtest true = [if]
-  : deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
-    s>f pi 180e f/ f* ;
-[else]
-  : deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
-    s>f fpi 180e f/ f* ;
-[then]
+: deg>rads ( uangle -- f: rrad ) \ unangle from stack gets converted to rads and place in floating stack
+  s>f fpi 180e f/ f* ;
 
 : corrodinates? ( nx1 ny1 ndistance uangle -- nx2 ny2 ) \ given nx1 ny1 ndistance and uangle return the nx2 and ny2 corrodiantes
   0 0 { nx1 ny1 ndistance uangle na nb }
