@@ -466,9 +466,9 @@ true value yposition  \ is the real location of y motor .. note if value is true
     fdup to fslope
     \ use B = Y - ( m * X ) to solve for this y intercept
     nx s>f f*
-    ny s>f fswap f- fdup to fYintercept \ y intercept in floating stack  ( f: fYintercept )
+    ny s>f fswap f- to fYintercept \ y intercept in floating stack  ( f: fYintercept )
     uangle 90 < if
-      90 uangle - deg>rads fsin f* to fXn
+      fYintercept 90 uangle - deg>rads fsin f* to fXn
       \ solve y intercept for tablemax
       fslope xm-max s>f f*
       ym-max s>f fswap f-  \ ( f: fYintereceptmax )
@@ -490,7 +490,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
       \ fslope known, fYintercept know
       \ solve for xn
       ym-max s>f fYintercept f-
-      90 180 uangle - - deg>rads fsin f* to fXn
+      90 180 uangle - - deg>rads fsin f* to fXn 
       nx ny xm-max ym-min distance? s>f fxn f+ fdup to ftablemax
       uqnt s>f f/ fdup to fdpl
       fXn fswap f/ fdup to fltomin
