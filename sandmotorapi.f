@@ -377,8 +377,8 @@ true value yposition  \ is the real location of y motor .. note if value is true
 
 : coordinates? ( nx1 ny1 ndistance uangle -- nx2 ny2 ) \ given nx1 ny1 ndistance and uangle return the nx2 and ny2 corrodiantes
   0 0 { nx1 ny1 ndistance uangle na nb }
-  ndistance 360 uangle - deg>rads fsin s>f f* f>s to na
-  ndistance 360 uangle - deg>rads fcos s>f f* f>s to nb
+  ndistance s>f 360 uangle - deg>rads fcos  f* f>s to na
+  ndistance s>f 360 uangle - deg>rads fsin  f* f>s to nb
   nx1 na + ny1 nb + ;
 
 : (calc-na) ( uc uangle -- nx ) \ find na
