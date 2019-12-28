@@ -65,5 +65,16 @@ gforthtest true = [if]
   { nx ny udist1 uangle1 udist2 uangle2 udist3 uangle3 }
   nx ny udist1 uangle1 coordinates?
   nx ny udist2 uangle2 coordinates? .s drawline . cr
-  xposition yposition nx ny udist3 uangle3 coordinates? .s drawline . cr
-  xposition yposition nx ny udist1 uangle1 coordinates? .s drawline . cr  ;
+  nx ny udist2 uangle2 coordinates?
+  nx ny udist3 uangle3 coordinates? .s drawline . cr
+  nx ny udist3 uangle3 coordinates?
+  nx ny udist1 uangle1 coordinates? .s drawline . cr  ;
+
+: ntrianglecenter ( uqnt ndincrease naincrease nx ny udist1 uangle1 udist2 uangle2 udist3 uangle3 -- ) \ draw uqnt amounts of trianglecenter triangles
+  { uqnt udincrease naincrease nx ny udist1 uangle1 udist2 uangle2 udist3 uangle3 }
+  uqnt 0 ?do
+    nx ny udist1 i udincrease * + uangle1 i naincrease * +
+    udist2 i udincrease * + uangle2 i naincrease * +
+    udist3 i udincrease * + uangle3 i naincrease * +
+    trianglecenter
+  loop ;
