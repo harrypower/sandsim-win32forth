@@ -57,3 +57,13 @@ gforthtest true = [if]
   xposition yposition 2dup udist1 uangle1 coordinates? .s drawline . cr
   xposition yposition 2dup udist2 uangle2 coordinates? .s drawline . cr
   xposition yposition nx ny .s drawline . cr ;
+
+: trianglecenter ( nx ny udist1 uangle1 udist2 uangle2 udist3 uangle3 -- ) \ draw triangle from center defined by nx ny
+\ udist1 uangle1 define first leg from nx ny
+\ udist2 uangle2 define second leg from nx ny
+\ udist3 uangle3 define third leg from nx ny
+  { nx ny udist1 uangle1 udist2 uangle2 udist3 uangle3 }
+  nx ny udist1 uangle1 coordinates?
+  nx ny udist2 uangle2 coordinates? .s drawline . cr
+  xposition yposition nx ny udist3 uangle3 coordinates? .s drawline . cr
+  xposition yposition nx ny udist1 uangle1 coordinates? .s drawline . cr  ;
