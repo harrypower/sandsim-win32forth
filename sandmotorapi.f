@@ -167,10 +167,20 @@ true value yposition  \ is the real location of y motor .. note if value is true
 \ these valuese are used to do internal sandtable location calculations in the following words only
 : boardermove  ( nx ny -- nflag )
   0 { nx ny nflag } \ simply move the ball to each closest edge one dirction at a time
-  nx xm-min < if xm-min movetox to nflag then
-  nx xm-max > if xm-max movetox to nflag then
-  ny ym-min < if ym-min movetoy to nflag then
-  ny ym-max > if ym-max movetoy to nflag then nflag ;
+  nx xm-min - abs
+  nx xm-max - abs min
+  ny ym-min - abs
+  ny ym-max - abs min > if
+    nx xm-min < if xm-min movetox to nflag then
+    nx xm-max > if xm-max movetox to nflag then
+    ny ym-min < if ym-min movetoy to nflag then
+    ny ym-max > if ym-max movetoy to nflag then
+  else
+    ny ym-min < if ym-min movetoy to nflag then
+    ny ym-max > if ym-max movetoy to nflag then
+    nx xm-min < if xm-min movetox to nflag then
+    nx xm-max > if xm-max movetox to nflag then
+  then nflag  ;
 
 : distance? { nx1 ny1 nx2 ny2 -- ndistance } \ return calculated distance between two dots
   nx2 nx1 - s>f 2e f**
