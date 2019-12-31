@@ -166,11 +166,40 @@ true value yposition  \ is the real location of y motor .. note if value is true
 \ *********** these next words are used to process and make a word that allows printing on the sandtable as a window
 \ these valuese are used to do internal sandtable location calculations in the following words only
 : boardermove  ( nx ny -- nflag )
-  0 { nx ny nflag } \ simply move the ball to each closest edge one dirction at a time
-  xm-min nx -
-  xm-max nx - min
-  ym-min ny -
-  ym-max ny - min > if
+  0 { nx ny nflag } \ simply move the ball to each closest edge one direction at a time
+  xposition xm-min <> xposition xm-max <> and
+  yposition ym-min <> yposition ym-max <> and or if
+    xposition xm-min -
+    xm-max xposition - min
+    yposition ym-min -
+    ym-max yposition - min > if \ y first then x
+      yposition xm-min - ym-max yposition - > if
+        ym-max movetoy to nflag
+      else
+        ym-min movetoy to nflag
+      then
+      xposition xm-min - xm-max xposition - > if
+        xm-max movetox to nflag
+      else
+        xm-min movetox to nflag
+      then
+    else \ x first then y
+      xposition xm-min - xm-max xposition - > if
+        xm-max movetox to nflag
+      else
+        xm-min movetox to nflag
+      then
+      yposition xm-min - ym-max yposition - > if
+        ym-max movetoy to nflag
+      else
+        ym-min movetoy to nflag
+      then
+    then
+  then
+  xm-min nx - abs
+  xm-max nx - abs min
+  ym-min ny - abs
+  ym-max ny - abs min < if
     nx xm-min < if xm-min movetox to nflag then
     nx xm-max > if xm-max movetox to nflag then
     ny ym-min < if ym-min movetoy to nflag then
