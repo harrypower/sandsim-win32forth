@@ -26,7 +26,7 @@
 
 \ Revisions:
 \ 04/06/2019 started coding
-\ 30/07/2019 adjusted code for gforth and win32forth 
+\ 30/07/2019 adjusted code for gforth and win32forth
 
 : gforthtest ( -- nflag ) \ nflag is false if gforth is not running.  nflag is true if gforth is running
   c" gforth" find swap drop false = if false else true then ;
@@ -88,6 +88,18 @@ gforthtest true = [if]
     nangle i + s>f rdeg>rrad fcos usize s>f f* nx s>f f+ to rcx
     nangle i + s>f rdeg>rrad fsin usize s>f f* ny s>f f+ to rcy
     rcx f>s rcy f>s drawline .
+  5 +loop ;
+
+: arc ( nx ny nstartangle ntotalangles usize -- ) \ draw an arc with nx ny as center usize is radius nstartangle is arc start with ntotalangles as travel angles
+  { nx ny nstartangle ntotalangles usize }
+  nstartangle s>f rdeg>rrad fcos usize s>f f* nx s>f f+ to rcx
+  nstartangle s>f rdeg>rrad fsin usize s>f f* ny s>f f+ to rcy
+  rcx f>s rcy f>s movetoxy .
+  ntotalangles 0 do
+    rcx f>s rcy f>s
+    nstartangle i + s>f rdeg>rrad fcos usize s>f f* nx s>f f+ to rcx
+    nstartangle i + s>f rdeg>rrad fsin usize s>f f* ny s>f f+ to rcy
+    rcx f>s rcy f>s .s drawline . cr 
   5 +loop ;
 
 : circle2 ( nx ny nangle usize ) \ nx ny start point on circle nangle is angle pointing at center of circle usize is the radius of circle
