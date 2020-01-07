@@ -196,10 +196,10 @@ true value yposition  \ is the real location of y motor .. note if value is true
       then
     then
   then
-  xm-min nx - abs
-  xm-max nx - abs min
-  ym-min ny - abs
-  ym-max ny - abs min < if
+  xm-min nx abs - abs
+  xm-max nx abs - abs min
+  ym-min ny abs - abs
+  ym-max ny abs - abs min < if
     nx xm-min < if xm-min movetox to nflag then
     nx xm-max > if xm-max movetox to nflag then
     ny ym-min < if ym-min movetoy to nflag then
@@ -335,11 +335,11 @@ true value yposition  \ is the real location of y motor .. note if value is true
       nby2 to nsy2
       2 to pointtest
     else \ pointtest must be 1 so the correct boarder to use needs to be determined
-      nx1 nsx1 = nx2 nx1 > and if nbx1 nx1 > if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
-      nx1 nsx1 = nx2 nx1 < and if nbx1 nx1 < if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
+      nx1 nsx1 = nx2 nx1 > and if nbx1 nx1 >= if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
+      nx1 nsx1 = nx2 nx1 < and if nbx1 nx1 <= if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
 
-      nx2 nsx1 = nx1 nx2 > and if nbx1 nx2 > if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
-      nx2 nsx1 = nx1 nx2 < and if nbx1 nx2 < if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
+      nx2 nsx1 = nx1 nx2 > and if nbx1 nx2 >= if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
+      nx2 nsx1 = nx1 nx2 < and if nbx1 nx2 <= if nbx1 to nsx2 nby1 to nsy2 else nbx2 to nsx2 nby2 to nsy2 then then
       2 to pointtest
     then
   then
