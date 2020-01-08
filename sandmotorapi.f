@@ -173,7 +173,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
     xm-max xposition - min
     yposition ym-min -
     ym-max yposition - min > if \ y first then x
-      yposition xm-min - ym-max yposition - > if
+      yposition ym-min - ym-max yposition - > if
         ym-max movetoy to nflag
       else
         ym-min movetoy to nflag
@@ -189,7 +189,7 @@ true value yposition  \ is the real location of y motor .. note if value is true
       else
         xm-min movetox to nflag
       then
-      yposition xm-min - ym-max yposition - > if
+      yposition ym-min - ym-max yposition - > if
         ym-max movetoy to nflag
       else
         ym-min movetoy to nflag
