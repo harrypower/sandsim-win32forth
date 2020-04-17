@@ -34,11 +34,6 @@ gforthtest true = [if]
   needs sandmotorapi.f
 [then]
 
-\ : (calc-nx1) ( )
-\ ;
-\ : (calc-ny1)
-\ ;
-
 : drawvector ( nx ny nangle ndistance -- nx1 ny1 nflag ) \ starting at nx ny location draw a line ndistance long nangles from 3 oclock as 0 angle
 \ nflag is 200 if drawing took place and nx1 ny1 are valid current drawing locations
 \ nflag is 201 if drawing had some error and nx1 and ny1 are not valid current drawing locations
