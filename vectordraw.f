@@ -38,8 +38,8 @@ gforthtest true = [if]
 \ nflag is 200 if drawing took place and nx1 ny1 are valid current drawing locations
 \ nflag is 201 if drawing had some error and nx1 and ny1 are not valid current drawing locations
   0 0 { nx ny nangle ndistance nx1 ny1 }
-  ndistance nangle (calc-na) to nx1
-  ndistance nangle (calc-nb) to ny1
+  ndistance s>f nangle deg>rads fcos f* f>s to nx1
+  ndistance s>f nangle deg>rads fsin f* f>s to ny1
   nx1 nx + to nx1
   ny1 ny + to ny1
   nx ny nx1 ny1 drawline
