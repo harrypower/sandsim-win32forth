@@ -57,7 +57,7 @@ gforthtest true = [if]
 : polar>rect ( nangle ndistance - nx ny ) \ convert angle distance to x and y corrodinates with unit circle math
   2dup
   s>f swap deg>rads fcos f* f>s \ nx
-  s>f swap deg>rads fsin f* f>s \ ny ;
+  s>f swap deg>rads fsin f* f>s ; \ ny 
 
 : threeleggedspiral ( ntimes angle1 distance1 angle2 distance2 angel3 distance3 -- ) \ draws 3 legged spirograph assuming current x and y possion is start of pattern and 0 angle is start for all 3 legs
   to distance3
