@@ -18,9 +18,13 @@
 \ tools to convert gcode to vector data used by vectordraw.f
 
 \ Requires:
+\ raw x and y data input file at -> c:\Users\Philip\Documents\inkscape-stuff\raw.data
+\ processed angle distance output file placed at -> c:\Users\Philip\Documents\inkscape-stuff\vector.data
 
 \ Revisions:
 \ 07/01/2021 started coding
+\ 07/15/2021 file input and processing to internal list of xypairs
+\ 07/15/2021 rect to polar converstion
 
 needs linklist.f
 needs extstruct.f
@@ -41,6 +45,13 @@ buffersize chars buffer: xypair$
 
 : openrawfile ( -- )
   s" c:\Users\Philip\Documents\inkscape-stuff\raw.data" r/o open-file throw to fid ;
+
+: openvectoroutfile ( -- )
+  s" c:\Users\Philip\Documents\inkscape-stuff\vector.data" file-status true <> if
+    s" c:\Users\Philip\Documents\inkscape-stuff\vector.data" delete-file throw
+  then
+  drop
+  s" c:\Users\Philip\Documents\inkscape-stuff\vector.data" w/o create-file throw to fid ;
 
 : getxf ( naddr u -- nflag  fs: -- fx ) \ string naddr u if it contains the x string turn it in floating stack and true
     2dup s"  " search if swap drop - >float if true else false 0.0e then else 2drop 2drop false 0.0e then ;
@@ -103,7 +114,7 @@ buffersize chars buffer: xypair$
   [ previous ]
   ;M
 
-:M fxy@: ( -- f: -- fx fy ) \ retrieve next nx ny from list
+:M fxy@: ( -- f: -- fx fy ) \ retrieve next nx ny from list ... note this also steps to next link
   data@: self >nextlink: self
   [ rawpoint ]
   dup fx f@ fy f@
@@ -126,7 +137,7 @@ buffersize chars buffer: xypair$
   until
   fid close-file throw ;
 
-: rect>polor ( -- f: fx1 fy1 fx2 fy2 -- fangle fdistance )
+: rect>polar ( -- f: fx1 fy1 fx2 fy2 -- fangle fdistance )
   frot f- ( -- f: -- fx1 fx2 fy )
   fswap frot f- ( -- f: -- fy fx )
   fdup frot fdup frot ( -- f: -- fx fy fy fx )
@@ -172,3 +183,18 @@ buffersize chars buffer: xypair$
   #Links: self 1 - ;M
 
 ;OBJECT
+
+: makepolar ( -- ) \ take rect data list and make the polar data list from it
+  >firstlink: rawxy
+  qnt: rawad 0 <> if ~: rawxy then
+  fxy@: rawxy
+  to tempy to tempx
+  qnt: rawxy 1 - 0 ?do
+    tempx tempy
+    fxy@: rawxy
+    fdup to tempy
+    swap fdup to tempx swap
+    rect>polar
+    fad!: rawad
+  loop
+;
