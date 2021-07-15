@@ -125,3 +125,50 @@ buffersize chars buffer: xypair$
     if fxy!: rawxy false else fdrop fdrop true then
   until
   fid close-file throw ;
+
+: rect>polor ( -- f: fx1 fy1 fx2 fy2 -- fangle fdistance )
+  frot f- ( -- f: -- fx1 fx2 fy )
+  fswap frot f- ( -- f: -- fy fx )
+  fdup frot fdup frot ( -- f: -- fx fy fy fx )
+  2.0e f** fswap 2.0e f** ( -- f: -- fx fy fx3 fy3 )
+  f+ fsqrt ( -- f: -- fx fy fdistance )
+  frot frot ( -- f: -- fdistance fx fy )
+  fswap fatan2 ( -- f: -- fdistance fangleradian )
+  180e fpi f/ f* fswap ( -- f: -- fangle fdistance )
+;
+
+:OBJECT rawad <SUPER Linked-List
+
+:M ClassInit:  ( -- ) \ constructor
+  ClassInit: super
+  ;M
+
+:M ~: ( -- ) \ destructor
+\ first remove all the allocated floating data in the list here
+  >firstlink: self
+  #links: self 1 - 0 ?do
+    data@: self >nextlink: self
+    dup 0 = if drop else free throw then
+  loop
+  ~: super
+  ;M
+
+:M fad!: ( -- f: fangle fdistance -- ) \ store fangle and fdistance in list
+  sizeof vectordata allocate throw
+  [ vectordata ]
+  dup dup fdistance f! fangle f!
+  data!: self addlink: self
+  [ previous ]
+  ;M
+
+:M fad@: ( -- f: -- fangle fdistance ) \ retrieve next nx ny from list
+  data@: self >nextlink: self
+  [ vectordata ]
+  dup fangle f@ fdistance f@
+  [ previous ]
+  ;M
+
+:M qnt: ( -- nline-qnt ) \ return how many data pairs
+  #Links: self 1 - ;M
+
+;OBJECT
