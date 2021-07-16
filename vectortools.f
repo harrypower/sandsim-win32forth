@@ -30,18 +30,10 @@ needs linklist.f
 needs extstruct.f
 
 10 set-precision
-0.0e fvalue tempx
-0.0e fvalue tempy
 0 value fid
 256 value buffersize
 0 value xypairsize
 buffersize chars buffer: xypair$
-\ 0.0e fvalue fx1
-\ 0.0e fvalue fy1
-\ 0.0e fvalue fx2
-\ 0.0e fvalue fy2
-\ 0.0e fvalue fangle
-\ 0.0e fvalue fdistance
 
 : openrawfile ( -- )
   s" c:\Users\Philip\Documents\inkscape-stuff\raw.data" r/o open-file throw to fid ;
@@ -193,5 +185,25 @@ buffersize chars buffer: xypair$
     link#: rawxy 1 - >link#: rawxy
     rect>polar
     fad!: rawad
+  loop
+;
+
+buffersize chars buffer: adpair$
+buffersize chars buffer: output$
+0 value adpairsize
+: makead$ ( -- caddr u f: fangle fdistance -- )
+  fswap adpair$ (fe.)
+  adpair$ count output$ swap move
+  adpair$ count to adpairsize drop
+  s"  " output$ adpairsize + swap move adpairsize 1 + to adpairsize
+  adpair$ (fe.) adpair$ count output$ adpairsize + swap move
+  adpair$ count adpairsize + to adpairsize drop
+  output$ adpairsize ;
+  
+: makewritepolar ( -- ) \ take rect data list and make polar data list and write it to output file
+  makepolar
+  openvectoroutfile
+  qnt: rawad 0 ?do
+
   loop
 ;
