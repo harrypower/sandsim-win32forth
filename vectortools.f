@@ -187,13 +187,10 @@ buffersize chars buffer: xypair$
 : makepolar ( -- ) \ take rect data list and make the polar data list from it
   >firstlink: rawxy
   qnt: rawad 0 <> if ~: rawxy then
-  fxy@: rawxy
-  to tempy to tempx
   qnt: rawxy 1 - 0 ?do
-    tempx tempy
     fxy@: rawxy
-    fdup to tempy
-    swap fdup to tempx swap
+    fxy@: rawxy
+    link#: rawxy 1 - >link#: rawxy
     rect>polar
     fad!: rawad
   loop
