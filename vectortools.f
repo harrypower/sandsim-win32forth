@@ -1,6 +1,6 @@
 \ vectortools.f
 
-\    Copyright (C) 2020  Philip King Smith
+\    Copyright (C) 2021  Philip King Smith
 
 \    This program is free software: you can redistribute it and/or modify
 \    it under the terms of the GNU General Public License as published by
@@ -25,6 +25,7 @@
 \ 07/01/2021 started coding
 \ 07/15/2021 file input and processing to internal list of xypairs
 \ 07/15/2021 rect to polar converstion
+\ 07/16/2021 finished makewritepolar word to take rawxy data and store it after converting it to vector data 
 
 needs linklist.f
 needs extstruct.f
