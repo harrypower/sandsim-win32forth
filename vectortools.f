@@ -107,7 +107,7 @@ buffersize chars buffer: xypair$
   ;M
 
 :M fxy@: ( -- f: -- fx fy ) \ retrieve next nx ny from list ... note this also steps to next link
-  data@: self >nextlink: self
+  data@: self 
   [ rawpoint ]
   dup fx f@ fy f@
   [ previous ]
@@ -165,7 +165,7 @@ buffersize chars buffer: xypair$
   ;M
 
 :M fad@: ( -- f: -- fangle fdistance ) \ retrieve next nx ny from list
-  data@: self >nextlink: self
+  data@: self \ >nextlink: self
   [ vectordata ]
   dup fangle f@ fdistance f@
   [ previous ]
@@ -178,15 +178,14 @@ buffersize chars buffer: xypair$
 
 : makepolar ( -- ) \ take rect data list and make the polar data list from it
   >firstlink: rawxy
-  qnt: rawad 0 <> if ~: rawxy then
+  qnt: rawad 0 <> if ~: rawad then
   qnt: rawxy 1 - 0 ?do
     fxy@: rawxy
+    >NextLink: rawxy
     fxy@: rawxy
-    link#: rawxy 1 - >link#: rawxy
     rect>polar
     fad!: rawad
-  loop
-;
+  loop ;
 
 buffersize chars buffer: adpair$
 buffersize chars buffer: output$
@@ -199,11 +198,15 @@ buffersize chars buffer: output$
   adpair$ (fe.) adpair$ count output$ adpairsize + swap move
   adpair$ count adpairsize + to adpairsize drop
   output$ adpairsize ;
-  
+
 : makewritepolar ( -- ) \ take rect data list and make polar data list and write it to output file
   makepolar
   openvectoroutfile
-  qnt: rawad 0 ?do
-
+  >firstlink: rawad
+  qnt: rawad  0 ?do
+    fad@: rawad makead$
+    >NextLink: rawad
+    fid write-line throw
   loop
-;
+  fid flush-file throw
+  fid close-file throw ;
