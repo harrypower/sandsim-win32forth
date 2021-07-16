@@ -107,7 +107,7 @@ buffersize chars buffer: xypair$
   ;M
 
 :M fxy@: ( -- f: -- fx fy ) \ retrieve next nx ny from list ... note this also steps to next link
-  data@: self 
+  data@: self
   [ rawpoint ]
   dup fx f@ fy f@
   [ previous ]
@@ -165,7 +165,7 @@ buffersize chars buffer: xypair$
   ;M
 
 :M fad@: ( -- f: -- fangle fdistance ) \ retrieve next nx ny from list
-  data@: self \ >nextlink: self
+  data@: self
   [ vectordata ]
   dup fangle f@ fdistance f@
   [ previous ]
