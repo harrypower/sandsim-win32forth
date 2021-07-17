@@ -58,3 +58,53 @@ buffersize chars buffer: adpair$
   else
     drop false 0.0e 0.0e
   then ;
+
+:struct vectordata
+  b/float fangle
+  b/float fdistance
+;struct
+
+:OBJECT rawad <SUPER Linked-List
+
+:M ClassInit:  ( -- ) \ constructor
+  ClassInit: super
+  ;M
+
+:M ~: ( -- ) \ destructor
+\ first remove all the allocated floating data in the list here
+  >firstlink: self
+  #links: self 1 - 0 ?do
+    data@: self >nextlink: self
+    dup 0 = if drop else free throw then
+  loop
+  ~: super
+  ;M
+
+:M fad!: ( -- f: fangle fdistance -- ) \ store fangle and fdistance in list
+  sizeof vectordata allocate throw
+  [ vectordata ]
+  dup dup fdistance f! fangle f!
+  data!: self addlink: self
+  [ previous ]
+  ;M
+
+:M fad@: ( -- f: -- fangle fdistance ) \ retrieve next nx ny from list
+  data@: self
+  [ vectordata ]
+  dup fangle f@ fdistance f@
+  [ previous ]
+  ;M
+
+:M qnt: ( -- nline-qnt ) \ return how many data pairs
+  #Links: self 1 - ;M
+
+;OBJECT
+
+: readrawad ( -- ) \ opens and reads vector.data file and puts the xy data in rawad linked list
+  openvectorfile
+  qnt: rawad 0 <> if ~: rawad then
+  begin
+    getadpair
+    if fad!: rawad false else fdrop fdrop true then
+  until
+  fid close-file throw ;
