@@ -37,3 +37,24 @@ buffersize chars buffer: adpair$
 
 : openvectorfile ( -- )
   s" c:\Users\Philip\Documents\inkscape-stuff\vector.data" r/o open-file throw to fid ;
+
+: getaf ( naddr u -- nflag  fs: -- fa ) \ string naddr u if it contains the angle string turn it in floating stack and true
+    2dup s"  " search if swap drop - >float if true else false 0.0e then else 2drop 2drop false 0.0e then ;
+
+: getdf ( naddr u -- nflag  fs: -- fd ) \ string naddr u if it contains the distance string turn it in floating stack and true
+\ if string is not understandable as a floating number then return false and the floating stack contains 0.0e
+  s"  " search if 1 /string  -trailing >float if true else false 0.0e then else 2drop false 0.0e then ;
+
+: getadf ( naddr u -- nflag fs: -- fa fd )
+  2dup getaf rot rot getdf and ;
+
+: getadpair ( -- nflag fs: -- fx fy )
+\ nflag is true if an xy pair was read in from file
+\ nflag is false if the file has no more lines to read or if the raw.data file is not readable
+\ the floating value of xy pair are returned on floating stack and is only valid if nflag is true
+  adpair$ buffersize fid read-line throw
+  if
+    adpair$ swap getadf
+  else
+    drop false 0.0e 0.0e
+  then ;
