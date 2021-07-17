@@ -64,7 +64,7 @@ buffersize chars buffer: adpair$
   b/float fdistance
 ;struct
 
-:OBJECT rawad <SUPER Linked-List
+:OBJECT rawad <SUPER Linked-List \ object to contain fangle and fdistance linked list
 
 :M ClassInit:  ( -- ) \ constructor
   ClassInit: super
@@ -108,3 +108,44 @@ buffersize chars buffer: adpair$
     if fad!: rawad false else fdrop fdrop true then
   until
   fid close-file throw ;
+
+:struct rawpoint
+  b/float fx
+  b/float fy
+;struct
+
+:OBJECT rawxy <SUPER Linked-List \ object to contain x and y processed data for drawing
+
+:M ClassInit:  ( -- ) \ constructor
+  ClassInit: super
+  ;M
+
+:M ~: ( -- ) \ destructor
+  \ first remove all the allocated floating data in the list here
+  >firstlink: self
+  #links: self 1 - 0 ?do
+    data@: self >nextlink: self
+    dup 0 = if drop else free throw then
+  loop
+  ~: super
+  ;M
+
+:M fxy!: ( -- f: fx fy -- ) \ store fx and fy in list at current link list location
+  sizeof rawpoint allocate throw
+  [ rawpoint ]
+  dup dup fy f! fx f!
+  data!: self addlink: self
+  [ previous ]
+  ;M
+
+:M fxy@: ( -- f: -- fx fy ) \ retrieve next nx ny from list ... note this does not step to the next list node
+  data@: self
+  [ rawpoint ]
+  dup fx f@ fy f@
+  [ previous ]
+  ;M
+
+:M qnt: ( -- nline-qnt ) \ return how many data pairs
+  #Links: self 1 - ;M
+
+;OBJECT
