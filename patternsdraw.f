@@ -149,3 +149,16 @@ buffersize chars buffer: adpair$
   #Links: self 1 - ;M
 
 ;OBJECT
+
+: degrees>radians ( -- f: fangle -- fangle1 ) \ convert degrees to radians
+  fpi 180e f/ f* ;
+
+: calcpolar>rect  ( nxscale nyscale nangle -- f: fangle fdistance -- fx fy )
+\ given the nangle change and the nxscale and nyscale change calculate the fx and fy of the input fangle and fdistance data
+\ fx and fy is the change assuming the fangle fdistance started at x 0 and y 0
+  fswap degrees>radians s>f degrees>radians f+ ( nxscale nyscale f: fdistance fangle1 )
+  f2dup fcos f* ( nxscale nyscale f: fdistance fangle1 fx )
+  frot frot fsin f* ( nxscale nyscale f: fx fy )
+  s>f 10.0e f/ f* ( nxscale f: fx fy1 )
+  fswap s>f 10.0e f/ f* fswap ( f: fx1 fy1 )
+;
