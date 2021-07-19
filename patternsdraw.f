@@ -88,7 +88,7 @@ buffersize chars buffer: adpair$
   [ previous ]
   ;M
 
-:M fad@: ( -- f: -- fangle fdistance ) \ retrieve next nx ny from list
+:M fad@: ( -- f: -- fangle fdistance ) \ retrieve nx ny from list at current link
   data@: self
   [ vectordata ]
   dup fangle f@ fdistance f@
@@ -109,12 +109,12 @@ buffersize chars buffer: adpair$
   until
   fid close-file throw ;
 
-:struct rawpoint
+:struct deltpoint
   b/float fx
   b/float fy
 ;struct
 
-:OBJECT rawxy <SUPER Linked-List \ object to contain x and y processed data for drawing
+:OBJECT deltaxy <SUPER Linked-List \ object to contain delta x and delta y data calculated from rawad data
 
 :M ClassInit:  ( -- ) \ constructor
   ClassInit: super
@@ -131,8 +131,8 @@ buffersize chars buffer: adpair$
   ;M
 
 :M fxy!: ( -- f: fx fy -- ) \ store fx and fy in list at current link list location
-  sizeof rawpoint allocate throw
-  [ rawpoint ]
+  sizeof deltpoint allocate throw
+  [ deltpoint ]
   dup dup fy f! fx f!
   data!: self addlink: self
   [ previous ]
@@ -140,7 +140,7 @@ buffersize chars buffer: adpair$
 
 :M fxy@: ( -- f: -- fx fy ) \ retrieve next nx ny from list ... note this does not step to the next list node
   data@: self
-  [ rawpoint ]
+  [ deltpoint ]
   dup fx f@ fy f@
   [ previous ]
   ;M
@@ -161,4 +161,14 @@ buffersize chars buffer: adpair$
   frot frot fsin f* ( nxscale nyscale f: fx fy )
   s>f 10.0e f/ f* ( nxscale f: fx fy1 )
   fswap s>f 10.0e f/ f* fswap ( f: fx1 fy1 )
+;
+
+: calcdeltaxy { nxscale nyscale nangle -- } \ read the rawad data and calculate the offsetpoint data given the nxscale nyscale and nangle data then store in deltaxy
+  qnt: deltaxy 0 <> if ~: deltaxy then
+  >firstlink: rawad
+  qnt: rawad 0 ?do
+    fad@: rawad nxscale nyscale nangle calcpolar>rect
+    fxy!: deltaxy
+    >nextlink: rawad
+  loop
 ;
