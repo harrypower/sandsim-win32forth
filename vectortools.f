@@ -25,7 +25,7 @@
 \ 07/01/2021 started coding
 \ 07/15/2021 file input and processing to internal list of xypairs
 \ 07/15/2021 rect to polar converstion
-\ 07/16/2021 finished makewritepolar word to take rawxy data and store it after converting it to vector data 
+\ 07/16/2021 finished makewritepolar word to take rawxy data and store it after converting it to vector data
 
 needs linklist.f
 needs extstruct.f
@@ -211,3 +211,6 @@ buffersize chars buffer: output$
   loop
   fid flush-file throw
   fid close-file throw ;
+
+: readmakewritepolar ( -- ) \ simply read in raw.data file and process it into polar data and then save as vector.data
+  readrawad makewritepolar ;

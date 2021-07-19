@@ -159,8 +159,8 @@ buffersize chars buffer: adpair$
   fswap degrees>radians s>f degrees>radians f+ ( nxscale nyscale f: fdistance fangle1 )
   f2dup fcos f* ( nxscale nyscale f: fdistance fangle1 fx )
   frot frot fsin f* ( nxscale nyscale f: fx fy )
-  s>f 10.0e f/ f* ( nxscale f: fx fy1 )
-  fswap s>f 10.0e f/ f* fswap ( f: fx1 fy1 )
+  s>f 100.0e f/ f* ( nxscale f: fx fy1 )
+  fswap s>f 100.0e f/ f* fswap ( f: fx1 fy1 )
 ;
 
 : calcdeltaxy { nxscale nyscale nangle -- } \ read the rawad data and calculate the offsetpoint data given the nxscale nyscale and nangle data then store in deltaxy
@@ -170,5 +170,21 @@ buffersize chars buffer: adpair$
     fad@: rawad nxscale nyscale nangle calcpolar>rect
     fxy!: deltaxy
     >nextlink: rawad
+  loop ;
+
+0.0e fvalue fx1
+0.0e fvalue fy1
+0.0e fvalue fx2
+0.0e fvalue fy2
+
+: drawpattern ( nx ny nxscale nyscale nangle -- ) \ draw the pattern starting at nx ny with nxscale and nyscale with rotation of nangle
+  calcdeltaxy
+  s>f to fy1 s>f to fx1
+  >firstlink: deltaxy
+  qnt: deltaxy  0 ?do
+    fxy@: deltaxy fy1 f+ to fy2 fx1 f+ to fx2
+    >nextlink: deltaxy
+    fx1 f>s fy1 f>s fx2 f>s fy2 f>s drawline drop
+    fx2 to fx1 fy2 to fy1
   loop
 ;
