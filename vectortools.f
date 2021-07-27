@@ -213,4 +213,4 @@ buffersize chars buffer: output$
   fid close-file throw ;
 
 : readmakewritepolar ( -- ) \ simply read in raw.data file and process it into polar data and then save as vector.data
-  readrawad makewritepolar ;
+  readrawxy makewritepolar ;
